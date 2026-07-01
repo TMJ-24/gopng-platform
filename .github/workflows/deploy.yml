@@ -2,10 +2,11 @@ name: Deploy to AWS ECS
 
 on:
   push:
-    branches: [main]
+    branches: [master]
+  workflow_dispatch:
 
 env:
-  AWS_REGION: ap-southeast-2          # Sydney — closest to PNG
+  AWS_REGION: ap-southeast-2
   ECR_REPOSITORY: gopng-platform
   ECS_SERVICE: gopng-platform-service
   ECS_CLUSTER: gopng-platform-cluster
@@ -16,18 +17,17 @@ permissions:
   contents: read
 
 jobs:
-  # ── 1. Type-check & lint ───────────────────────────────────────────────
+  # ── 1. Type-check & lint ──────────────────────────────────────────
   check:
     name: Type-check & Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -38,7 +38,7 @@ jobs:
       - name: Lint
         run: npm run lint
 
-  # ── 2. Build & push Docker image to ECR ──────────────────────────────
+  # ── 2. Build & push Docker image to ECR ──────────────────────────
   build-push:
     name: Build & Push to ECR
     runs-on: ubuntu-latest
@@ -74,7 +74,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  # ── 3. Run DB migrations ───────────────────────────────────────────────
+  # ── 3. Run DB migrations ──────────────────────────────────────────
   migrate:
     name: Run DB Migrations
     runs-on: ubuntu-latest
@@ -89,15 +89,27 @@ jobs:
 
       - name: Run ECS migration task
         run: |
-          aws ecs run-task \
+          TASK_ARN=$(aws ecs run-task \
             --cluster $ECS_CLUSTER \
             --task-definition gopng-migrate \
-            --network-configuration "awsvpcConfiguration={subnets=[${{ secrets.ECS_SUBNET_IDS }}],securityGroups=[${{ secrets.ECS_SECURITY_GROUP_ID }}],assignPublicIp=ENABLED}" \
+            --network-configuration "awsvpcConfiguration={subnets=[${{ vars.ECS_SUBNETS }}],securityGroups=[${{ vars.ECS_SECURITY_GROUP }}],assignPublicIp=DISABLED}" \
             --launch-type FARGATE \
             --overrides '{"containerOverrides":[{"name":"migrate","command":["npm","run","payload","--","migrate"]}]}' \
-            --wait-for-completion
+            --query "tasks[0].taskArn" \
+            --output text)
+          echo "Migration task: $TASK_ARN"
+          aws ecs wait tasks-stopped \
+            --cluster $ECS_CLUSTER \
+            --tasks $TASK_ARN
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster $ECS_CLUSTER \
+            --tasks $TASK_ARN \
+            --query "tasks[0].containers[0].exitCode" \
+            --output text)
+          echo "Migration exit code: $EXIT_CODE"
+          [ "$EXIT_CODE" = "0" ] || exit 1
 
-  # ── 4. Deploy updated task to ECS Fargate ─────────────────────────────
+  # ── 4. Deploy to ECS Fargate ──────────────────────────────────────
   deploy:
     name: Deploy to ECS Fargate
     runs-on: ubuntu-latest
@@ -131,3 +143,18 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
+      - name: Scale service up on first deploy
+        run: |
+          DESIRED=$(aws ecs describe-services \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --query "services[0].desiredCount" \
+            --output text)
+          if [ "$DESIRED" = "0" ]; then
+            aws ecs update-service \
+              --cluster $ECS_CLUSTER \
+              --service $ECS_SERVICE \
+              --desired-count 1
+            echo "Scaled service from 0 to 1"
+          fi
