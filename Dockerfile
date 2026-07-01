@@ -48,13 +48,17 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Full node_modules so `node node_modules/.bin/payload migrate` works in the
-# migration task. Overwrites the lean standalone node_modules — the server.js
-# still works because the full set is a superset of what standalone needs.
+# Full node_modules — provides payload CLI, tsx loader, and all runtime deps.
+# Overwrites the lean standalone node_modules; server.js still works because
+# the full set is a superset.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
-# Payload migration files
-COPY --from=builder --chown=nextjs:nodejs /app/src/migrations ./src/migrations
+# Source files + tsconfig required by `payload migrate` at runtime.
+# The payload CLI uses tsconfig-paths to resolve @payload-config -> src/payload.config.ts,
+# and tsx (bundled in payload's deps) to transpile it. Without these the CLI
+# crashes with "Cannot read properties of null (reading 'config')".
+COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
+COPY --from=builder --chown=nextjs:nodejs /app/src ./src
 
 USER nextjs
 
