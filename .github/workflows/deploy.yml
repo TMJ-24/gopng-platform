@@ -140,7 +140,10 @@ jobs:
         run: |
           aws ecs describe-task-definition \
             --task-definition gopng-platform \
-            --query taskDefinition > task-definition.json
+            --query taskDefinition \
+            | jq 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)
+                  | .containerDefinitions[0] |= del(.command)' \
+            > task-definition.json
 
       - name: Update task definition with new image
         id: task-def
