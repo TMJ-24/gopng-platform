@@ -208,6 +208,15 @@ export interface Site {
     address?: string | null;
     poBox?: string | null;
   };
+  /**
+   * GitHub repository name — set automatically when the site is created.
+   */
+  repoName?: string | null;
+  repoUrl?: string | null;
+  /**
+   * Current state of the static site deployment.
+   */
+  deployStatus?: ('none' | 'building' | 'deployed' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -559,6 +568,9 @@ export interface SitesSelect<T extends boolean = true> {
         address?: T;
         poBox?: T;
       };
+  repoName?: T;
+  repoUrl?: T;
+  deployStatus?: T;
   updatedAt?: T;
   createdAt?: T;
 }
