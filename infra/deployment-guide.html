@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GoPNG Digital Platform — Master Deployment Guide</title>
+<style>
+  /* ── Reset & base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+  }
+
+  /* ── Print layout ────────────────────────────────────── */
+  @page {
+    size: A4;
+    margin: 18mm 20mm 18mm 20mm;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { font-size: 9.5pt; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    table, figure, .box, .step { page-break-inside: avoid; }
+    .page-break { page-break-before: always; }
+    a { color: inherit; text-decoration: none; }
+  }
+
+  /* ── Screen wrapper ──────────────────────────────────── */
+  @media screen {
+    body { background: #e8e8e8; padding: 20px; }
+    .page {
+      background: #fff;
+      max-width: 800px;
+      margin: 0 auto 24px;
+      padding: 40px 48px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.15);
+      border-radius: 4px;
+    }
+    .print-btn {
+      position: fixed; top: 20px; right: 20px;
+      background: #0972D3; color: #fff; border: none;
+      padding: 10px 20px; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(9,114,211,.4);
+    }
+    .print-btn:hover { background: #065fad; }
+  }
+
+  /* ── Cover ───────────────────────────────────────────── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    min-height: 240mm;
+    justify-content: space-between;
+    padding-bottom: 24px;
+  }
+
+  .cover-top { border-top: 5px solid #0972D3; padding-top: 32px; }
+
+  .cover-badge {
+    display: inline-block;
+    background: #0972D3;
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+  }
+
+  .cover h1 {
+    font-size: 28pt;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #0a0a23;
+    margin-bottom: 10px;
+  }
+
+  .cover-subtitle {
+    font-size: 13pt;
+    color: #4a5568;
+    margin-bottom: 36px;
+    font-weight: 400;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 18px 0;
+    margin-bottom: 32px;
+  }
+
+  .cover-meta-item label {
+    display: block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #718096;
+    margin-bottom: 2px;
+  }
+
+  .cover-meta-item span {
+    font-size: 10pt;
+    color: #1a1a2e;
+    font-weight: 600;
+  }
+
+  .cover-arch-diagram {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .arch-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .arch-box {
+    background: #fff;
+    border: 1.5px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 7px 13px;
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: #2d3748;
+    text-align: center;
+    min-width: 90px;
+  }
+
+  .arch-box.blue { border-color: #0972D3; color: #0972D3; background: #ebf5fe; }
+  .arch-box.green { border-color: #29845A; color: #29845A; background: #edfaf4; }
+  .arch-box.orange { border-color: #d68910; color: #8a5700; background: #fef9e7; }
+  .arch-box.purple { border-color: #7c3aed; color: #5b21b6; background: #f5f3ff; }
+
+  .arch-arrow { font-size: 13px; color: #718096; }
+
+  .cover-footer {
+    border-top: 2px solid #0972D3;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8pt;
+    color: #718096;
+  }
+
+  /* ── TOC ─────────────────────────────────────────────── */
+  .toc { margin: 8px 0; }
+
+  .toc-section {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dotted #e2e8f0;
+    font-size: 10pt;
+  }
+
+  .toc-section.main { font-weight: 700; color: #0972D3; }
+  .toc-section.sub { padding-left: 20px; font-size: 9.5pt; color: #4a5568; }
+  .toc-pg { font-size: 9pt; color: #718096; font-weight: 600; min-width: 24px; text-align: right; }
+
+  /* ── Section headings ────────────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 28px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0972D3;
+  }
+
+  .section-num {
+    background: #0972D3;
+    color: #fff;
+    font-size: 8.5pt;
+    font-weight: 800;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  h2.section-title {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #0a0a23;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 18px 0 8px;
+    padding-left: 10px;
+    border-left: 3px solid #0972D3;
+  }
+
+  h4 {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 12px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  p { margin-bottom: 8px; }
+
+  /* ── Code blocks ─────────────────────────────────────── */
+  pre {
+    background: #1a1a2e;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 8pt;
+    font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    overflow-x: auto;
+    margin: 10px 0 14px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  code {
+    font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    background: #edf2f7;
+    color: #c53030;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 8.5pt;
+  }
+
+  pre code { background: transparent; color: inherit; padding: 0; border-radius: 0; font-size: inherit; }
+
+  /* Comment colour inside pre */
+  .cm { color: #68d391; }
+  .kw { color: #63b3ed; }
+  .st { color: #fbd38d; }
+  .at { color: #fc8181; }
+
+  /* ── Tables ──────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    margin: 10px 0 16px;
+  }
+
+  thead tr { background: #0972D3; color: #fff; }
+  thead th { padding: 8px 10px; font-weight: 700; text-align: left; font-size: 8.5pt; letter-spacing: .04em; }
+  tbody tr:nth-child(even) { background: #f7fafc; }
+  tbody tr:hover { background: #ebf5fe; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+
+  /* ── Info boxes ──────────────────────────────────────── */
+  .box {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 9.5pt;
+  }
+
+  .box-info { background: #ebf5fe; border-left: 4px solid #0972D3; }
+  .box-warn { background: #fffbeb; border-left: 4px solid #d69e2e; }
+  .box-danger { background: #fff5f5; border-left: 4px solid #e53e3e; }
+  .box-success { background: #f0fff4; border-left: 4px solid #38a169; }
+
+  .box-title { font-weight: 800; font-size: 9pt; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+  .box-info .box-title { color: #0972D3; }
+  .box-warn .box-title { color: #b7791f; }
+  .box-danger .box-title { color: #c53030; }
+  .box-success .box-title { color: #276749; }
+
+  /* ── Steps ───────────────────────────────────────────── */
+  .steps { counter-reset: step-counter; margin: 10px 0; }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    counter-increment: step-counter;
+    background: #0972D3;
+    color: #fff;
+    font-size: 9pt;
+    font-weight: 800;
+    min-width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-body { flex: 1; }
+  .step-body strong { display: block; font-size: 10pt; color: #0a0a23; margin-bottom: 4px; }
+
+  /* ── Checklist ───────────────────────────────────────── */
+  .checklist { list-style: none; margin: 8px 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 9.5pt; }
+  .checklist li::before {
+    content: '☐';
+    font-size: 13pt;
+    line-height: 1;
+    color: #0972D3;
+    flex-shrink: 0;
+  }
+  .checklist li.checked::before { content: '☑'; color: #38a169; }
+
+  /* ── Page footer ─────────────────────────────────────── */
+  .page-footer {
+    margin-top: 40px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    color: #718096;
+  }
+
+  /* ── Misc ────────────────────────────────────────────── */
+  ul { padding-left: 18px; margin: 6px 0 10px; }
+  li { margin-bottom: 4px; }
+  .mono { font-family: 'Cascadia Code', Consolas, monospace; font-size: 8.5pt; }
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .badge-blue { background: #bee3f8; color: #1a365d; }
+  .badge-green { background: #c6f6d5; color: #22543d; }
+  .badge-orange { background: #feebc8; color: #7b341e; }
+  .badge-red { background: #fed7d7; color: #742a2a; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  hr.divider { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Save as PDF</button>
+
+<!-- ═══════════════════════════════════════════════════════════ COVER -->
+<div class="page">
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-badge">Official Deployment Document</div>
+    <h1>GoPNG Digital Platform</h1>
+    <div class="cover-subtitle">Master Deployment Guide — AWS Production Environment</div>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item"><label>Document version</label><span>1.0</span></div>
+      <div class="cover-meta-item"><label>Date</label><span>July 2026</span></div>
+      <div class="cover-meta-item"><label>Platform repository</label><span>TMJ-24/gopng-platform</span></div>
+      <div class="cover-meta-item"><label>Site template repository</label><span>TMJ-24/site-template</span></div>
+      <div class="cover-meta-item"><label>Target region</label><span>ap-southeast-2 (Sydney)</span></div>
+      <div class="cover-meta-item"><label>Stack name</label><span>gopng-platform</span></div>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="cover-arch-diagram">
+      <div style="text-align:center;font-size:8pt;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;">System Architecture Overview</div>
+
+      <div class="arch-row">
+        <div class="arch-box blue">Browser / Admin</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">CloudFront</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">ALB</div>
+      </div>
+
+      <div class="arch-row" style="margin:4px 0;">
+        <div style="font-size:9pt;color:#718096;width:100%;text-align:center;">↓ Payload CMS Admin + REST API</div>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-box green">ECS Fargate<br/><small>Private Subnet</small></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box green">RDS PostgreSQL 16<br/><small>Private Subnet</small></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0;">
+        <div class="arch-arrow" style="transform:rotate(90deg);">→</div>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-box orange">S3 Media Bucket<br/><small>Payload uploads</small></div>
+        <div class="arch-box orange">S3 Static Sites<br/><small>Agency websites</small></div>
+        <div class="arch-box purple">GitHub Actions<br/><small>OIDC deploy</small></div>
+      </div>
+
+      <div style="text-align:center;margin-top:10px;">
+        <div class="arch-row">
+          <div class="arch-box blue">Agency Site Repos<br/><small>site-health-gov-pg…</small></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box blue">CloudFront Distribution<br/><small>static sites</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-title">Infrastructure as Code</div>
+      All AWS resources in this guide are provisioned by a single CloudFormation template:
+      <code>infra/stack.yml</code> in the <code>gopng-platform</code> repository. One command deploys everything.
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Government of Papua New Guinea</span>
+    <span>Page 1</span>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ TOC -->
+<div class="page">
+  <div class="section-header">
+    <div style="width:24px;height:24px;background:#0972D3;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </div>
+    <h2 class="section-title">Table of Contents</h2>
+  </div>
+
+  <div class="toc">
+    <div class="toc-section main"><span>1. Prerequisites &amp; AWS Account Setup</span><span class="toc-pg">3</span></div>
+    <div class="toc-section sub"><span>1.1 Required Tools</span><span class="toc-pg">3</span></div>
+    <div class="toc-section sub"><span>1.2 IAM Bootstrap User</span><span class="toc-pg">3</span></div>
+    <div class="toc-section main"><span>2. Prepare Secrets &amp; Credentials</span><span class="toc-pg">3</span></div>
+    <div class="toc-section sub"><span>2.1 GitHub Personal Access Token</span><span class="toc-pg">3</span></div>
+    <div class="toc-section sub"><span>2.2 Payload Secret</span><span class="toc-pg">3</span></div>
+    <div class="toc-section main"><span>3. Deploy CloudFormation Stack</span><span class="toc-pg">4</span></div>
+    <div class="toc-section sub"><span>3.1 Stack Deploy Command</span><span class="toc-pg">4</span></div>
+    <div class="toc-section sub"><span>3.2 Stack Outputs Reference</span><span class="toc-pg">4</span></div>
+    <div class="toc-section main"><span>4. Configure GitHub Actions — Platform Repo</span><span class="toc-pg">5</span></div>
+    <div class="toc-section sub"><span>4.1 Secrets</span><span class="toc-pg">5</span></div>
+    <div class="toc-section sub"><span>4.2 Variables</span><span class="toc-pg">5</span></div>
+    <div class="toc-section main"><span>5. First Docker Image &amp; ECS Scale-Up</span><span class="toc-pg">5</span></div>
+    <div class="toc-section main"><span>6. Add S3 Media Storage (Payload Plugin)</span><span class="toc-pg">6</span></div>
+    <div class="toc-section main"><span>7. DNS &amp; HTTPS Configuration</span><span class="toc-pg">6</span></div>
+    <div class="toc-section sub"><span>7.1 ACM Certificate</span><span class="toc-pg">6</span></div>
+    <div class="toc-section sub"><span>7.2 ALB HTTPS Listener</span><span class="toc-pg">7</span></div>
+    <div class="toc-section sub"><span>7.3 DNS Records</span><span class="toc-pg">7</span></div>
+    <div class="toc-section main"><span>8. Site Provisioning Flow</span><span class="toc-pg">7</span></div>
+    <div class="toc-section sub"><span>8.1 How It Works</span><span class="toc-pg">7</span></div>
+    <div class="toc-section sub"><span>8.2 Site Repo GitHub Actions Variables</span><span class="toc-pg">8</span></div>
+    <div class="toc-section main"><span>9. Environment Variables Reference</span><span class="toc-pg">8</span></div>
+    <div class="toc-section main"><span>10. Monitoring &amp; Logs</span><span class="toc-pg">9</span></div>
+    <div class="toc-section main"><span>11. Disaster Recovery &amp; Rollback</span><span class="toc-pg">9</span></div>
+    <div class="toc-section main"><span>12. Post-Deployment Checklist</span><span class="toc-pg">10</span></div>
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 1 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2 class="section-title">Prerequisites &amp; AWS Account Setup</h2>
+  </div>
+
+  <h3>1.1 Required Tools</h3>
+  <table>
+    <thead><tr><th>Tool</th><th>Minimum Version</th><th>Install</th></tr></thead>
+    <tbody>
+      <tr><td>AWS CLI</td><td>v2.x</td><td><code>winget install Amazon.AWSCLI</code></td></tr>
+      <tr><td>Docker Desktop</td><td>v4.x</td><td><code>winget install Docker.DockerDesktop</code></td></tr>
+      <tr><td>Node.js</td><td>v20 LTS</td><td><code>winget install OpenJS.NodeJS.LTS</code></td></tr>
+      <tr><td>Git</td><td>v2.x</td><td><code>winget install Git.Git</code></td></tr>
+      <tr><td>GitHub CLI (optional)</td><td>v2.x</td><td><code>winget install GitHub.cli</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.2 IAM Bootstrap User / Role</h3>
+  <p>The AWS principal running the CloudFormation deploy needs these managed policies (or equivalent):</p>
+  <ul>
+    <li><code>AWSCloudFormationFullAccess</code></li>
+    <li><code>IAMFullAccess</code> — required to create OIDC provider + roles</li>
+    <li><code>AmazonVPCFullAccess</code></li>
+    <li><code>AmazonRDSFullAccess</code></li>
+    <li><code>AmazonS3FullAccess</code></li>
+    <li><code>AmazonECS_FullAccess</code></li>
+    <li><code>AmazonEC2ContainerRegistryFullAccess</code></li>
+    <li><code>ElasticLoadBalancingFullAccess</code></li>
+    <li><code>CloudFrontFullAccess</code></li>
+    <li><code>SecretsManagerReadWrite</code></li>
+  </ul>
+
+  <div class="box box-warn">
+    <div class="box-title">Scope down after deploy</div>
+    This IAM user/role is only needed for the initial CloudFormation deploy. Rotate or delete it afterwards — all ongoing deploys use OIDC roles with minimal permissions.
+  </div>
+
+  <div class="section-header" style="margin-top:28px;">
+    <div class="section-num">2</div>
+    <h2 class="section-title">Prepare Secrets &amp; Credentials</h2>
+  </div>
+
+  <h3>2.1 GitHub Personal Access Token (PAT)</h3>
+  <p>Create a fine-grained PAT at <strong>github.com → Settings → Developer settings → Personal access tokens</strong>.</p>
+  <table>
+    <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Token name</td><td>gopng-platform-provisioner</td></tr>
+      <tr><td>Expiration</td><td>1 year (renew annually)</td></tr>
+      <tr><td>Repository access</td><td>All repositories under TMJ-24</td></tr>
+      <tr><td>Repository permissions</td><td>Contents: Read &amp; Write, Actions: Read &amp; Write, Administration: Read &amp; Write, Workflows: Read &amp; Write</td></tr>
+    </tbody>
+  </table>
+  <p>Save the token — it is shown only once. You pass it as the <code>GitHubToken</code> parameter to CloudFormation.</p>
+
+  <h3>2.2 Generate Payload Secret</h3>
+  <p>Run this command and save the output as <code>PayloadSecretValue</code>:</p>
+  <pre><span class="cm"># PowerShell</span>
+[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
+
+<span class="cm"># bash / WSL</span>
+openssl rand -base64 48</pre>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 3 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2 class="section-title">Deploy CloudFormation Stack</h2>
+  </div>
+
+  <h3>3.1 Stack Deploy Command</h3>
+  <p>Run from the root of the <code>gopng-platform</code> repository. Replace placeholder values with real ones.</p>
+
+<pre><span class="kw">aws</span> cloudformation deploy \
+  --template-file infra/stack.yml \
+  --stack-name gopng-platform \
+  --region ap-southeast-2 \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameter-overrides \
+    <span class="at">DBPassword</span>=<span class="st">"YourSecurePassword16chars!"</span> \
+    <span class="at">PayloadSecretValue</span>=<span class="st">"&lt;output of openssl rand -base64 48&gt;"</span> \
+    <span class="at">GitHubToken</span>=<span class="st">"ghp_xxxxxxxxxxxxxxxxxxxx"</span> \
+    <span class="at">GitHubOrg</span>=<span class="st">"TMJ-24"</span> \
+    <span class="at">GitHubTemplateRepo</span>=<span class="st">"site-template"</span> \
+    <span class="at">PayloadURL</span>=<span class="st">"https://admin.platform.gov.pg"</span> \
+    <span class="at">DBInstanceClass</span>=<span class="st">"db.t4g.micro"</span> \
+    <span class="at">DBMultiAZ</span>=<span class="st">"false"</span> \
+    <span class="at">CreateOIDCProvider</span>=<span class="st">"true"</span>
+
+<span class="cm"># Deployment takes ~15 minutes (RDS creation is the long step)</span></pre>
+
+  <div class="box box-info">
+    <div class="box-title">If the OIDC provider already exists</div>
+    If your AWS account already has a GitHub Actions OIDC provider (from another project), set <code>CreateOIDCProvider=false</code> to skip creation — CloudFormation cannot create a duplicate.
+  </div>
+
+  <h3>3.2 Retrieve Stack Outputs</h3>
+<pre><span class="kw">aws</span> cloudformation describe-stacks \
+  --stack-name gopng-platform \
+  --region ap-southeast-2 \
+  --query <span class="st">"Stacks[0].Outputs"</span> \
+  --output table</pre>
+
+  <h3>3.3 Stack Outputs Reference</h3>
+  <table>
+    <thead><tr><th>Output Key</th><th>Description</th><th>Where Used</th></tr></thead>
+    <tbody>
+      <tr><td>ALBDNSName</td><td>Load balancer hostname</td><td>Admin domain CNAME target</td></tr>
+      <tr><td>CloudFrontDomain</td><td>CloudFront distribution hostname</td><td>Agency domain CNAME target</td></tr>
+      <tr><td>CloudFrontDistributionId</td><td>CF distribution ID</td><td>Site repo Actions variable</td></tr>
+      <tr><td>ECRRepositoryURI</td><td>ECR image registry URI</td><td>GitHub Actions deploy workflow</td></tr>
+      <tr><td>PlatformDeployRoleARN</td><td>OIDC role for platform deploys</td><td>GitHub Actions secret in gopng-platform</td></tr>
+      <tr><td>SiteDeployRoleARN</td><td>OIDC role for site deploys</td><td>ECS task env var + site repo Actions variable</td></tr>
+      <tr><td>PrivateSubnetIds</td><td>Comma-separated private subnet IDs</td><td>ECS RunTask subnet config</td></tr>
+      <tr><td>ECSSecurityGroupId</td><td>ECS tasks security group</td><td>ECS RunTask SG config</td></tr>
+      <tr><td>MediaBucketName</td><td>S3 bucket for Payload uploads</td><td>ECS task environment var</td></tr>
+      <tr><td>StaticSitesBucketName</td><td>S3 bucket for static sites</td><td>ECS task environment var + site repos</td></tr>
+      <tr><td>RDSEndpoint</td><td>RDS hostname</td><td>Included in DATABASE_URL secret</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-success">
+    <div class="box-title">DATABASE_URL is auto-configured</div>
+    The <code>gopng/database-url</code> Secrets Manager secret is built automatically by the stack using the RDS endpoint. No manual secret construction needed.
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 4 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2 class="section-title">Configure GitHub Actions — Platform Repo</h2>
+  </div>
+
+  <p>Navigate to <strong>github.com/TMJ-24/gopng-platform → Settings → Secrets and variables → Actions</strong>.</p>
+
+  <h3>4.1 Repository Secrets</h3>
+  <table>
+    <thead><tr><th>Secret Name</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>AWS_DEPLOY_ROLE_ARN</td><td><em>PlatformDeployRoleARN</em> from stack outputs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Repository Variables</h3>
+  <table>
+    <thead><tr><th>Variable Name</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>AWS_REGION</td><td>ap-southeast-2</td></tr>
+      <tr><td>ECR_REGISTRY</td><td>Prefix of <em>ECRRepositoryURI</em> — everything before <code>/gopng-platform</code><br/><small>e.g. <code>123456789012.dkr.ecr.ap-southeast-2.amazonaws.com</code></small></td></tr>
+      <tr><td>ECS_CLUSTER</td><td>gopng-platform-cluster</td></tr>
+      <tr><td>ECS_SERVICE</td><td>gopng-platform-service</td></tr>
+      <tr><td>ECS_TASK_FAMILY</td><td>gopng-platform</td></tr>
+      <tr><td>MIGRATE_TASK_FAMILY</td><td>gopng-migrate</td></tr>
+      <tr><td>ECS_SUBNETS</td><td><em>PrivateSubnetIds</em> from stack outputs (comma-separated)</td></tr>
+      <tr><td>ECS_SECURITY_GROUP</td><td><em>ECSSecurityGroupId</em> from stack outputs</td></tr>
+      <tr><td>CLOUDFRONT_DISTRIBUTION_ID</td><td><em>CloudFrontDistributionId</em> from stack outputs</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-header" style="margin-top:28px;">
+    <div class="section-num">5</div>
+    <h2 class="section-title">First Docker Image &amp; ECS Scale-Up</h2>
+  </div>
+
+  <p>The ECS service starts with <code>DesiredCount: 0</code> to avoid a pull failure before any image exists in ECR. The first CI/CD run builds the image, pushes it, and scales the service up to 1. Trigger it manually after configuring secrets:</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Trigger the deploy workflow</strong>
+        On GitHub: <strong>Actions → Deploy to AWS ECS → Run workflow → Branch: master</strong>.<br/>
+        Or via CLI:
+        <pre><span class="kw">gh</span> workflow run deploy.yml --repo TMJ-24/gopng-platform --ref master</pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Monitor the workflow</strong>
+        The run takes ~8 minutes. Stages: checkout → build Docker image → push to ECR → run DB migration task → update ECS service.
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Verify the service is running</strong>
+        <pre><span class="kw">aws</span> ecs describe-services \
+  --cluster gopng-platform-cluster \
+  --services gopng-platform-service \
+  --region ap-southeast-2 \
+  --query <span class="st">"services[0].{Running:runningCount,Desired:desiredCount,Status:status}"</span></pre>
+        Expected: <code>{"Running": 1, "Desired": 1, "Status": "ACTIVE"}</code>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Test the admin UI</strong>
+        Visit the <em>ALBDNSName</em> output in a browser. You should see the Payload CMS login page.<br/>
+        Log in and create the first admin user.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 6 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2 class="section-title">Add S3 Media Storage (Payload Plugin)</h2>
+  </div>
+
+  <div class="box box-danger">
+    <div class="box-title">Critical — Do Before Going Live</div>
+    By default, Payload stores uploaded files on the container's local filesystem. On ECS Fargate, the filesystem is ephemeral — files are lost on every task restart or deployment. Install the S3 adapter before any real media is uploaded.
+  </div>
+
+  <h3>6.1 Install the Package</h3>
+<pre><span class="kw">npm</span> install @payloadcms/storage-s3</pre>
+
+  <h3>6.2 Register the Plugin in <code>payload.config.ts</code></h3>
+<pre><span class="kw">import</span> { s3Storage } from <span class="st">'@payloadcms/storage-s3'</span>
+
+<span class="kw">export default</span> buildConfig({
+  plugins: [
+    s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.S3_MEDIA_BUCKET!,
+      config: {
+        region: process.env.AWS_REGION ?? <span class="st">'ap-southeast-2'</span>,
+        <span class="cm">// No credentials needed — ECSTaskRole provides them via instance metadata</span>
+      },
+    }),
+  ],
+  <span class="cm">// ... rest of config</span>
+})</pre>
+
+  <p>Commit and push — the next CI/CD deploy will pick it up. The ECS task role already has <code>s3:PutObject</code>, <code>s3:GetObject</code>, <code>s3:DeleteObject</code> on the media bucket.</p>
+
+  <div class="section-header" style="margin-top:28px;">
+    <div class="section-num">7</div>
+    <h2 class="section-title">DNS &amp; HTTPS Configuration</h2>
+  </div>
+
+  <h3>7.1 Issue ACM Certificate</h3>
+  <p>Request a certificate in <strong>ap-southeast-2</strong> (must match the ALB's region):</p>
+<pre><span class="kw">aws</span> acm request-certificate \
+  --domain-name admin.platform.gov.pg \
+  --validation-method DNS \
+  --region ap-southeast-2</pre>
+
+  <p>AWS will give you a CNAME record to add to your DNS zone. Add it, wait for status <code>ISSUED</code>:</p>
+<pre><span class="kw">aws</span> acm list-certificates --region ap-southeast-2 \
+  --query <span class="st">"CertificateSummaryList[?DomainName=='admin.platform.gov.pg']"</span></pre>
+
+  <h3>7.2 Add HTTPS Listener to ALB</h3>
+<pre><span class="cm"># Get the ALB ARN</span>
+<span class="kw">ALB_ARN</span>=$(aws elbv2 describe-load-balancers \
+  --names gopng-alb --region ap-southeast-2 \
+  --query <span class="st">"LoadBalancers[0].LoadBalancerArn"</span> --output text)
+
+<span class="cm"># Get the target group ARN</span>
+<span class="kw">TG_ARN</span>=$(aws elbv2 describe-target-groups \
+  --names gopng-platform-tg --region ap-southeast-2 \
+  --query <span class="st">"TargetGroups[0].TargetGroupArn"</span> --output text)
+
+<span class="cm"># Get the cert ARN</span>
+<span class="kw">CERT_ARN</span>=$(aws acm list-certificates --region ap-southeast-2 \
+  --query <span class="st">"CertificateSummaryList[?DomainName=='admin.platform.gov.pg'].CertificateArn"</span> \
+  --output text)
+
+<span class="cm"># Create HTTPS listener</span>
+<span class="kw">aws</span> elbv2 create-listener \
+  --load-balancer-arn $ALB_ARN \
+  --protocol HTTPS --port 443 \
+  --certificates CertificateArn=$CERT_ARN \
+  --ssl-policy ELBSecurityPolicy-TLS13-1-2-2021-06 \
+  --default-actions Type=forward,TargetGroupArn=$TG_ARN \
+  --region ap-southeast-2
+
+<span class="cm"># Redirect HTTP to HTTPS</span>
+<span class="kw">aws</span> elbv2 modify-listener \
+  --listener-arn $(aws elbv2 describe-listeners \
+    --load-balancer-arn $ALB_ARN \
+    --query <span class="st">"Listeners[?Port==\`80\`].ListenerArn"</span> --output text \
+    --region ap-southeast-2) \
+  --default-actions Type=redirect,RedirectConfig='{Protocol=HTTPS,Port=443,StatusCode=HTTP_301}' \
+  --region ap-southeast-2</pre>
+
+  <h3>7.3 DNS Records</h3>
+  <table>
+    <thead><tr><th>Record</th><th>Type</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>admin.platform.gov.pg</td><td>CNAME</td><td><em>ALBDNSName</em> from stack outputs</td></tr>
+      <tr><td>*.gov.pg (or per-agency)</td><td>CNAME</td><td><em>CloudFrontDomain</em> from stack outputs</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-info">
+    <div class="box-title">CloudFront HTTPS</div>
+    CloudFront serves HTTPS by default on its own <code>*.cloudfront.net</code> domain. For custom domains (e.g. <code>health.gov.pg</code>), request an ACM certificate in <strong>us-east-1</strong> (CloudFront requires certs in us-east-1) and attach it to the distribution.
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 6</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 8 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2 class="section-title">Site Provisioning Flow</h2>
+  </div>
+
+  <h3>8.1 How It Works</h3>
+  <p>When an admin creates a new Site in the Payload CMS admin panel, a fire-and-forget hook (<code>provisionSiteRepo</code>) runs in the background:</p>
+
+  <div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px 24px;margin:12px 0;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#0972D3;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">1. Admin creates Site</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">Admin clicks Save in Payload CMS</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#0972D3;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">2. Hook fires async</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">Admin UI returns immediately — no blocking</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#0972D3;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">3. Repo created</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">GitHub API clones <code>site-template</code> → <code>site-{slug}</code></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#0972D3;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">4. Variables set</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">5 Actions variables written to new repo (slug, API URL, S3 bucket, region, role ARN)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#0972D3;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">5. Workflow dispatched</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">GitHub Actions builds Next.js static site and syncs to S3</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="background:#38a169;color:#fff;font-size:8pt;font-weight:700;padding:4px 10px;border-radius:3px;white-space:nowrap;">6. Status updated</div>
+        <div style="flex:1;height:2px;background:#e2e8f0;"></div>
+        <div style="font-size:8.5pt;color:#4a5568;">Payload Site record updated: <code>deployStatus: deployed</code>, <code>repoName</code>, <code>repoUrl</code></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>8.2 Site Repo GitHub Actions Variables</h3>
+  <p>These are set automatically by <code>provisionSiteRepo</code>. Shown here for reference and manual troubleshooting:</p>
+  <table>
+    <thead><tr><th>Variable</th><th>Value</th><th>Set by</th></tr></thead>
+    <tbody>
+      <tr><td>SITE_SLUG</td><td>Slug field from the Site record (e.g. <code>health</code>)</td><td>Hook</td></tr>
+      <tr><td>PAYLOAD_API_URL</td><td>Public URL of the Payload admin (e.g. <code>https://admin.platform.gov.pg</code>)</td><td>Hook</td></tr>
+      <tr><td>S3_BUCKET</td><td>Static sites S3 bucket name</td><td>Hook</td></tr>
+      <tr><td>AWS_REGION</td><td>ap-southeast-2</td><td>Hook</td></tr>
+      <tr><td>AWS_ROLE_ARN</td><td>SiteDeployRoleARN from stack outputs</td><td>Hook</td></tr>
+      <tr><td>CLOUDFRONT_DISTRIBUTION_ID</td><td>CloudFrontDistributionId from stack outputs</td><td>Hook (if set in env)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-info">
+    <div class="box-title">Required ECS environment variables for provisioning</div>
+    The following variables must be set in the ECS task definition for provisioning to work. The stack sets most of them — verify after deploy:
+    <ul style="margin-top:6px;">
+      <li><code>GITHUB_TOKEN</code> — from Secrets Manager</li>
+      <li><code>GITHUB_ORG</code> — TMJ-24</li>
+      <li><code>GITHUB_TEMPLATE_REPO</code> — site-template</li>
+      <li><code>S3_STATIC_SITES_BUCKET</code> — auto-set from stack</li>
+      <li><code>NEXT_PUBLIC_PAYLOAD_URL</code> — your admin domain</li>
+      <li><code>AWS_DEPLOY_ROLE_ARN</code> — SiteDeployRoleARN output</li>
+    </ul>
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 7</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 9 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <h2 class="section-title">Environment Variables Reference</h2>
+  </div>
+
+  <h3>ECS Task — Application Container</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Source</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>DATABASE_URL</td><td>Secrets Manager: <code>gopng/database-url</code></td><td>PostgreSQL connection string</td></tr>
+      <tr><td>PAYLOAD_SECRET</td><td>Secrets Manager: <code>gopng/payload-secret</code></td><td>JWT signing secret (min 32 chars)</td></tr>
+      <tr><td>GITHUB_TOKEN</td><td>Secrets Manager: <code>gopng/github-token</code></td><td>PAT for site repo provisioning</td></tr>
+      <tr><td>NODE_ENV</td><td>Hardcoded: <code>production</code></td><td></td></tr>
+      <tr><td>PORT</td><td>Hardcoded: <code>3000</code></td><td></td></tr>
+      <tr><td>HOSTNAME</td><td>Hardcoded: <code>0.0.0.0</code></td><td>Required for Next.js standalone</td></tr>
+      <tr><td>GITHUB_ORG</td><td>Stack parameter</td><td>GitHub org for site repos</td></tr>
+      <tr><td>GITHUB_TEMPLATE_REPO</td><td>Stack parameter</td><td>Template repo name</td></tr>
+      <tr><td>S3_MEDIA_BUCKET</td><td>Stack output</td><td>Payload media uploads</td></tr>
+      <tr><td>S3_STATIC_SITES_BUCKET</td><td>Stack output</td><td>Agency static sites</td></tr>
+      <tr><td>AWS_REGION</td><td>Stack region</td><td>ap-southeast-2</td></tr>
+      <tr><td>AWS_DEPLOY_ROLE_ARN</td><td>Stack output</td><td>Role passed to site repos for OIDC</td></tr>
+      <tr><td>NEXT_PUBLIC_PAYLOAD_URL</td><td>Stack parameter</td><td>Public admin URL (used by site template)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Local Development (.env)</h3>
+  <p>Copy <code>.env.example</code> to <code>.env</code> and fill in:</p>
+<pre><span class="at">DATABASE_URL</span>=<span class="st">postgresql://postgres:password@localhost:5432/png_gwp</span>
+<span class="at">PAYLOAD_SECRET</span>=<span class="st">your-local-dev-secret-at-least-32-chars</span>
+<span class="at">GITHUB_TOKEN</span>=<span class="st">ghp_xxxx</span>
+<span class="at">GITHUB_ORG</span>=<span class="st">TMJ-24</span>
+<span class="at">GITHUB_TEMPLATE_REPO</span>=<span class="st">site-template</span>
+<span class="at">NEXT_PUBLIC_PAYLOAD_URL</span>=<span class="st">http://localhost:3000</span>
+<span class="at">S3_MEDIA_BUCKET</span>=<span class="st">gopng-media-123456789012</span>
+<span class="at">S3_STATIC_SITES_BUCKET</span>=<span class="st">gopng-static-sites-123456789012</span>
+<span class="at">AWS_REGION</span>=<span class="st">ap-southeast-2</span></pre>
+
+  <div class="section-header" style="margin-top:28px;">
+    <div class="section-num">10</div>
+    <h2 class="section-title">Monitoring &amp; Logs</h2>
+  </div>
+
+  <h3>CloudWatch Logs</h3>
+  <table>
+    <thead><tr><th>Log Group</th><th>Contains</th></tr></thead>
+    <tbody>
+      <tr><td>/ecs/gopng-platform (prefix: app)</td><td>Payload CMS application logs</td></tr>
+      <tr><td>/ecs/gopng-platform (prefix: migrate)</td><td>Database migration run logs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Useful Commands</h3>
+<pre><span class="cm"># Tail live ECS logs</span>
+<span class="kw">aws</span> logs tail /ecs/gopng-platform --follow --region ap-southeast-2
+
+<span class="cm"># List running ECS tasks</span>
+<span class="kw">aws</span> ecs list-tasks --cluster gopng-platform-cluster --region ap-southeast-2
+
+<span class="cm"># Force new ECS deployment (rolls to latest task definition)</span>
+<span class="kw">aws</span> ecs update-service \
+  --cluster gopng-platform-cluster \
+  --service gopng-platform-service \
+  --force-new-deployment \
+  --region ap-southeast-2
+
+<span class="cm"># Check ALB target health</span>
+<span class="kw">aws</span> elbv2 describe-target-health \
+  --target-group-arn $(aws elbv2 describe-target-groups \
+    --names gopng-platform-tg --region ap-southeast-2 \
+    --query <span class="st">"TargetGroups[0].TargetGroupArn"</span> --output text) \
+  --region ap-southeast-2</pre>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 11 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <h2 class="section-title">Disaster Recovery &amp; Rollback</h2>
+  </div>
+
+  <h3>Rollback a Bad ECS Deployment</h3>
+  <p>Every ECS task definition revision is retained in ECR. To roll back to a previous revision:</p>
+<pre><span class="cm"># List recent task definition revisions</span>
+<span class="kw">aws</span> ecs list-task-definitions \
+  --family-prefix gopng-platform \
+  --region ap-southeast-2 \
+  --sort DESC
+
+<span class="cm"># Roll back to a specific revision</span>
+<span class="kw">aws</span> ecs update-service \
+  --cluster gopng-platform-cluster \
+  --service gopng-platform-service \
+  --task-definition gopng-platform:<span class="st">REVISION_NUMBER</span> \
+  --region ap-southeast-2</pre>
+
+  <h3>Database Snapshot Restore</h3>
+  <p>RDS has deletion protection and automated snapshots (7-day retention). To restore:</p>
+<pre><span class="cm"># List available snapshots</span>
+<span class="kw">aws</span> rds describe-db-snapshots \
+  --db-instance-identifier gopng-platform-RDSInstance-xxxx \
+  --region ap-southeast-2
+
+<span class="cm"># Restore to a new instance from snapshot</span>
+<span class="kw">aws</span> rds restore-db-instance-from-db-snapshot \
+  --db-instance-identifier gopng-platform-restored \
+  --db-snapshot-identifier <span class="st">rds:snapshot-id</span> \
+  --db-instance-class db.t4g.micro \
+  --region ap-southeast-2</pre>
+
+  <div class="box box-warn">
+    <div class="box-title">Update DATABASE_URL after restore</div>
+    A restored RDS instance has a different endpoint. Update the <code>gopng/database-url</code> Secrets Manager secret and force a new ECS deployment to pick up the new connection string.
+  </div>
+
+  <h3>CloudFormation Stack Update</h3>
+  <p>To update the infrastructure (e.g. scale up RDS, increase ECS memory):</p>
+<pre><span class="cm"># Change DBInstanceClass parameter only — no re-deploy needed</span>
+<span class="kw">aws</span> cloudformation update-stack \
+  --stack-name gopng-platform \
+  --use-previous-template \
+  --parameters \
+    ParameterKey=DBInstanceClass,ParameterValue=db.t4g.small \
+    ParameterKey=DBPassword,UsePreviousValue=true \
+    ParameterKey=PayloadSecretValue,UsePreviousValue=true \
+    ParameterKey=GitHubToken,UsePreviousValue=true \
+    ParameterKey=GitHubOrg,UsePreviousValue=true \
+    ParameterKey=GitHubTemplateRepo,UsePreviousValue=true \
+    ParameterKey=PayloadURL,UsePreviousValue=true \
+    ParameterKey=DBMultiAZ,UsePreviousValue=true \
+    ParameterKey=TaskCpu,UsePreviousValue=true \
+    ParameterKey=TaskMemory,UsePreviousValue=true \
+    ParameterKey=CreateOIDCProvider,ParameterValue=false \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --region ap-southeast-2</pre>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0</span>
+    <span>Page 9</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ SECTION 12 -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <h2 class="section-title">Post-Deployment Checklist</h2>
+  </div>
+
+  <p>Work through this list after every fresh deployment. Tick each item before declaring the environment production-ready.</p>
+
+  <h3>Infrastructure</h3>
+  <ul class="checklist">
+    <li>CloudFormation stack status is <code>CREATE_COMPLETE</code> (not ROLLBACK)</li>
+    <li>All stack outputs are populated — copy them to a secure note</li>
+    <li>RDS instance status is <code>available</code></li>
+    <li>ECS service shows <code>runningCount: 1</code>, <code>desiredCount: 1</code></li>
+    <li>ALB target group health check is <code>healthy</code></li>
+    <li>ECR repository has at least one image tagged <code>latest</code></li>
+  </ul>
+
+  <h3>Application</h3>
+  <ul class="checklist">
+    <li>Payload CMS admin loads at ALB DNS name (HTTP first, then HTTPS after cert)</li>
+    <li>First admin user created in Payload</li>
+    <li><code>/api/health</code> returns 200 OK</li>
+    <li>Media upload: upload a test image in admin — verify it lands in the S3 media bucket</li>
+    <li>Create a test Site record — verify <code>deployStatus</code> changes to <code>building</code> then <code>deployed</code></li>
+    <li>Visit the CloudFront domain/<code>{site-slug}/</code> — static site is served</li>
+  </ul>
+
+  <h3>Security</h3>
+  <ul class="checklist">
+    <li>RDS is not publicly accessible (verify in AWS Console → RDS → Connectivity)</li>
+    <li>S3 static sites bucket is not publicly accessible directly (only via CloudFront OAC)</li>
+    <li>S3 media bucket objects are accessible publicly (Payload serves them directly)</li>
+    <li>ECS tasks have no public IP (<code>AssignPublicIp: DISABLED</code>)</li>
+    <li>OIDC provider created and both deploy roles are active in IAM</li>
+    <li>GitHub PAT stored in Secrets Manager, not in code or environment</li>
+    <li>Rotate the bootstrap IAM user/role after deploy</li>
+  </ul>
+
+  <h3>DNS &amp; HTTPS</h3>
+  <ul class="checklist">
+    <li>ACM certificate issued (status: <code>ISSUED</code>)</li>
+    <li>HTTPS listener added to ALB, HTTP redirects to HTTPS</li>
+    <li>Admin domain CNAME resolves to ALB DNS name</li>
+    <li>Agency domain CNAME resolves to CloudFront domain</li>
+    <li>TLS certificate valid (no browser warning)</li>
+  </ul>
+
+  <h3>Monitoring</h3>
+  <ul class="checklist">
+    <li>CloudWatch log group <code>/ecs/gopng-platform</code> receiving logs</li>
+    <li>Set up a CloudWatch alarm on ECS <code>MemoryUtilization &gt; 85%</code></li>
+    <li>Set up a CloudWatch alarm on RDS <code>FreeStorageSpace &lt; 5GB</code></li>
+    <li>Set up an ALB 5xx alarm for error rate monitoring</li>
+  </ul>
+
+  <hr class="divider" />
+
+  <div class="two-col" style="margin-top:16px;">
+    <div class="box box-info" style="margin:0;">
+      <div class="box-title">Estimated Monthly Cost (minimum)</div>
+      <ul style="margin-top:6px;font-size:9pt;">
+        <li>NAT Gateway: ~$35 USD/mo</li>
+        <li>RDS db.t4g.micro: ~$15 USD/mo</li>
+        <li>ECS Fargate 1 task (1vCPU, 2GB): ~$30 USD/mo</li>
+        <li>ALB: ~$18 USD/mo</li>
+        <li>CloudFront (10GB/mo): ~$1 USD/mo</li>
+        <li><strong>Total: ~$100 USD/mo</strong> (light traffic)</li>
+      </ul>
+    </div>
+    <div class="box box-success" style="margin:0;">
+      <div class="box-title">Production Hardening (next steps)</div>
+      <ul style="margin-top:6px;font-size:9pt;">
+        <li>Enable RDS Multi-AZ (<code>DBMultiAZ=true</code>)</li>
+        <li>Enable ECS Autoscaling (min 1, max 3)</li>
+        <li>Enable WAF on ALB and CloudFront</li>
+        <li>Enable CloudTrail for audit logging</li>
+        <li>Enable RDS Performance Insights</li>
+        <li>Set up AWS Backup plan for RDS</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>GoPNG Digital Platform — Confidential</span>
+    <span>Master Deployment Guide v1.0 — July 2026</span>
+    <span>Page 10</span>
+  </div>
+</div>
+
+</body>
+</html>
