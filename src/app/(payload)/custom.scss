@@ -1,0 +1,770 @@
+/* ── GoPNG Admin — Cloudscape (AWS) Theme ────────────────────────────── */
+
+/* ── Reset Payload dark theme vars to Cloudscape light palette ──────── */
+:root,
+[data-theme='light'],
+[data-theme='dark'] {
+  --theme-bg:              #F2F3F3 !important;
+  --theme-elevation-0:     #FFFFFF !important;
+  --theme-elevation-50:    #F2F3F3 !important;
+  --theme-elevation-100:   #EAEBEC !important;
+  --theme-elevation-150:   #D5DBDB !important;
+  --theme-elevation-200:   #8D99A8 !important;
+  --theme-elevation-250:   #687078 !important;
+  --theme-elevation-300:   #545B64 !important;
+  --theme-elevation-400:   #31465F !important;
+  --theme-elevation-500:   #232F3E !important;
+  --theme-elevation-1000:  #000716 !important;
+  --theme-text:            #000716 !important;
+  --theme-border-color:    #D5DBDB !important;
+  --theme-input-bg:        #FFFFFF !important;
+  --theme-success:         #1D8348 !important;
+  --theme-error:           #D13212 !important;
+  --theme-warning:         #F2820A !important;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────── */
+html, body {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #F2F3F3 !important;
+  color: #000716 !important;
+  font-family: "Amazon Ember", "Helvetica Neue", Roboto, Arial, sans-serif !important;
+}
+
+/* ── Force black text only in the main content area, NOT the nav ─────── */
+.template-default__wrap,
+.template-default__wrap *,
+.template-default__edit,
+.template-default__edit * {
+  color: #000716 !important;
+}
+
+/* The custom AdminNav manages its own colour palette via inline styles */
+.template-default__nav [data-custom-nav],
+.template-default__nav [data-custom-nav] * {
+  color: unset;
+}
+
+/* ── Nav container ───────────────────────────────────────────────────── */
+.template-default__nav {
+  padding: 0 !important;
+  overflow: hidden;
+  background: #FFFFFF !important;
+  border-right: 1px solid #D5DBDB !important;
+}
+
+/* Only our [data-custom-nav] wrapper is allowed to show inside the sidebar.
+   Hide every other direct child Payload renders (account link, version tag, etc.) */
+.template-default__nav > *:not([data-custom-nav]) {
+  display: none !important;
+}
+
+/* ── Hide Payload's sidebar collapse toggle — our custom nav has its own header ── */
+.nav__toggle,
+.nav__header,
+[class*="nav__toggle"],
+[class*="navToggle"],
+.template-default__nav > button:first-child,
+.template-default__nav > div > button:first-child {
+  display: none !important;
+}
+
+/* ── Hide Payload's own header — our custom AdminNav provides the brand header ── */
+.template-default__header {
+  display: none !important;
+}
+
+/* ── Fixed-sidebar layout ────────────────────────────────────────────── */
+
+/* Outer shell: full viewport, no overflow (prevents page-level scroll) */
+.template-default {
+  display: flex !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  padding-top: 0 !important;
+  top: 0 !important;
+}
+
+/* Sidebar: fixed height, never scrolls, animates width on collapse */
+.template-default__nav {
+  height: 100vh !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  width: 280px;
+  min-width: 280px;
+  transition: width 0.22s ease, min-width 0.22s ease !important;
+}
+
+/* Content area: takes remaining width, scrolls independently */
+.template-default__wrap {
+  flex: 1 !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-top: 0 !important;
+}
+
+/* ── Main content background ────────────────────────────────────────── */
+.template-default__wrap,
+.template-default__edit,
+.template-default__edit-view {
+  background: #F2F3F3 !important;
+}
+
+/* ── Remove double border between sidebar and content ───────────────── */
+.template-default__nav {
+  border-right: 1px solid #D5DBDB !important;
+  box-shadow: none !important;
+}
+
+/* ── Hide Payload's injected nav toggle button (chevron <) ──────────── */
+.template-default__nav button[aria-label],
+.template-default__nav > div:first-child > button,
+.nav__header-close,
+.nav-toggler {
+  display: none !important;
+}
+
+/* ── Document / edit view — flat, no card border ───────────────────── */
+.template-default__edit .render-fields,
+.template-default__edit .document-header,
+.collection-list {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ── Main content area — white page, no box ─────────────────────────── */
+.template-default__wrap {
+  background: #F2F3F3 !important;
+}
+
+.collection-list__main,
+.list-header,
+.list-controls,
+.template-default__edit-view {
+  background: transparent !important;
+}
+
+/* ── Sticky top utility bar (Locale + user avatar) ─────────────────── */
+/* Only add visual styling — do NOT override display/justify/align since
+   Payload positions the locale selector and profile icon using its own layout.
+   Overriding those caused the profile avatar to disappear. */
+.template-default__wrap > header,
+[class*="appHeader"],
+[class*="AppHeader"] {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #D5DBDB !important;
+}
+
+/* ── Locale selector button ──────────────────────────────────────────── */
+[class*="locale-selector"],
+[class*="LocaleSelector"],
+[class*="localeSelector"],
+.locale-selector {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 30px !important;
+  padding: 0 10px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #000716 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: border-color 0.12s, background 0.12s !important;
+}
+
+[class*="locale-selector"]:hover,
+[class*="LocaleSelector"]:hover,
+[class*="localeSelector"]:hover {
+  border-color: #0972D3 !important;
+  background: #EBF5FB !important;
+  color: #0972D3 !important;
+}
+
+/* Dropdown panel */
+[class*="locale-selector"] ul,
+[class*="localeSelector"] ul,
+[class*="LocaleSelector"] ul {
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0,7,22,0.12) !important;
+  padding: 4px !important;
+  min-width: 160px !important;
+}
+
+[class*="locale-selector"] li,
+[class*="localeSelector"] li,
+[class*="LocaleSelector"] li {
+  padding: 7px 12px !important;
+  font-size: 13px !important;
+  color: #000716 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  list-style: none !important;
+}
+
+[class*="locale-selector"] li:hover,
+[class*="localeSelector"] li:hover,
+[class*="LocaleSelector"] li:hover {
+  background: #EBF5FB !important;
+  color: #0972D3 !important;
+}
+
+[class*="locale-selector"] li[aria-selected="true"],
+[class*="localeSelector"] li[class*="active"],
+[class*="LocaleSelector"] li[class*="active"] {
+  background: #EBF5FB !important;
+  color: #0972D3 !important;
+  font-weight: 700 !important;
+}
+
+/* ── Breadcrumb ──────────────────────────────────────────────────────── */
+.step-nav {
+  padding: 12px 24px 0 !important;
+  background: transparent !important;
+}
+
+.step-nav,
+.step-nav * {
+  font-size: 12px !important;
+  color: #545B64 !important;
+}
+
+.step-nav a,
+.step-nav a * {
+  color: #0972D3 !important;
+  text-decoration: none !important;
+}
+
+.step-nav a:hover {
+  text-decoration: underline !important;
+}
+
+/* ── Document title area ─────────────────────────────────────────────── */
+.document-header,
+[class*="document-header"]:not([class*="controls"]) {
+  padding: 16px 24px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.document-header h1,
+[class*="documentTitle"] {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #000716 !important;
+  margin: 0 0 4px !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.3 !important;
+}
+
+[class*="document-header"] p,
+[class*="documentDescription"],
+.collection-edit__description {
+  font-size: 13px !important;
+  color: #687078 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* ── Document controls bar (Save row) ───────────────────────────────── */
+/* Target only the outer bar — DO NOT use [class*=] which matches nested children
+   and causes each child to become its own floating card. */
+.doc-controls {
+  background: #FFFFFF !important;
+  border-top: 1px solid #D5DBDB !important;
+  border-bottom: 1px solid #D5DBDB !important;
+  box-shadow: 0 1px 4px rgba(0,7,22,0.04) !important;
+}
+
+/* ── Edit form body ──────────────────────────────────────────────────── */
+.collection-edit {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Wrap the render-fields in a white card with margin */
+.render-fields {
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+  margin: 16px 24px 24px !important;
+  box-shadow: 0 1px 4px rgba(0,7,22,0.06) !important;
+}
+
+/* Remove inner card wrappers from field groups */
+.field-type.array,
+.field-type.blocks,
+.field-type.group,
+.render-fields > .field-type,
+.document-fields,
+.doc-tab,
+[class*="fieldGroup"],
+[class*="field-group"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.field-type {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 20px !important;
+}
+
+.field-type:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ── Labels ──────────────────────────────────────────────────────────── */
+label,
+.field-label {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #545B64 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 6px !important;
+}
+
+/* Required asterisk */
+.required,
+[class*="required"] {
+  color: #D13212 !important;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────── */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+input[type="search"] {
+  height: 38px !important;
+  padding: 0 12px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #8D99A8 !important;
+  border-radius: 4px !important;
+  color: #000716 !important;
+  font-size: 13px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.12s, box-shadow 0.12s !important;
+}
+
+textarea {
+  padding: 10px 12px !important;
+  min-height: 100px !important;
+  resize: vertical !important;
+  background: #FFFFFF !important;
+  border: 1px solid #8D99A8 !important;
+  border-radius: 4px !important;
+  color: #000716 !important;
+  font-size: 13px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+}
+
+select {
+  height: 38px !important;
+  padding: 0 12px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #8D99A8 !important;
+  border-radius: 4px !important;
+  color: #000716 !important;
+  font-size: 13px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #0972D3 !important;
+  box-shadow: 0 0 0 2px rgba(9,114,211,0.12) !important;
+  outline: none !important;
+}
+
+/* ── Undo styling for React Select's hidden internal inputs ──────────
+   React Select renders an invisible <input type="text"> inside its
+   control for keyboard search. Our input rules above force height/border
+   on it, making it appear as a visible white box. Reset it here. */
+.react-select__input,
+.react-select__input > input,
+[class*="react-select__input"] > input,
+[class*="rs__input"] > input {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 2px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  width: auto !important;
+  min-width: 2px !important;
+}
+
+/* Also reset any hidden native <select> Payload keeps for accessibility */
+.field-type.select > div > select,
+.field-type.relationship > div > select {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ── Table — list views ──────────────────────────────────────────────── */
+.table {
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.table thead th {
+  background: #F2F3F3 !important;
+  color: #545B64 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  border-bottom: 2px solid #D5DBDB !important;
+  padding: 10px 16px !important;
+}
+
+.table tbody tr:hover td {
+  background: #F2F8FD !important;
+}
+
+.table tbody tr td {
+  border-bottom: 1px solid #EAEBEC !important;
+  color: #000716 !important;
+  padding: 11px 16px !important;
+  font-size: 13px !important;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* ── Collection list page header ────────────────────────────────────── */
+
+/* Give the entire collection view room from the sticky top bar */
+.collection-list,
+.template-default__edit-view > .collection-list {
+  padding-top: 0 !important;
+}
+
+/* Title + action row */
+.collection-list__header,
+.list-header__wrap,
+[class*="list-header__wrap"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #D5DBDB !important;
+  padding: 28px 24px 20px !important;   /* 28px top = gap from breadcrumb border */
+  gap: 16px !important;
+}
+
+/* Collection title */
+.collection-list__header h1,
+.list-header__wrap h1,
+[class*="list-header"] h1 {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #000716 !important;
+  margin: 0 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.3 !important;
+}
+
+/* "Create New" button — proper blue primary, right-aligned */
+.collection-list__header .btn,
+.list-header__wrap .btn,
+[class*="list-header"] .btn,
+.collection-list__header a[href*="create"],
+.list-header__wrap a[href*="create"],
+[class*="list-header"] a[href*="create"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 34px !important;
+  padding: 0 16px !important;
+  background: #0972D3 !important;
+  border: 1px solid #0972D3 !important;
+  border-radius: 4px !important;
+  color: #FFFFFF !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  transition: background 0.12s, border-color 0.12s !important;
+}
+
+.collection-list__header .btn:hover,
+.list-header__wrap .btn:hover,
+[class*="list-header"] a[href*="create"]:hover {
+  background: #033160 !important;
+  border-color: #033160 !important;
+}
+
+/* SVG/icon inside Create New — keep white */
+.collection-list__header .btn svg,
+.list-header__wrap .btn svg,
+[class*="list-header"] .btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  color: #FFFFFF !important;
+}
+
+.collection-list__main,
+.list-header,
+.list-controls,
+.template-default__edit-view {
+  background: transparent !important;
+}
+
+/* Table wrapper horizontal padding */
+.collection-list__wrap,
+[class*="collectionList"],
+.template-default__edit-view > div {
+  padding: 0 24px 24px !important;
+}
+
+/* Controls row (search + Columns + Filters) */
+.list-controls,
+[class*="list-controls"] {
+  padding: 16px 24px 0 !important;
+}
+
+/* ── Search / filter bar ─────────────────────────────────────────────── */
+/* No forced height — let the inner input determine size.
+   The icon is absolutely positioned inside so the container needs relative. */
+.search-filter,
+[class*="search-filter"] {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 4px !important;
+  overflow: visible !important;
+}
+
+/* Ensure the icon SVG stays vertically centred inside the bar */
+.search-filter svg,
+[class*="search-filter"] > svg,
+.search-filter__icon,
+[class*="search-filter__icon"] {
+  position: absolute !important;
+  left: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  color: #687078 !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Padding-left leaves room for the icon */
+.search-filter input[type="text"],
+[class*="search-filter"] input[type="text"],
+[class*="search"] > input[type="text"] {
+  padding-left: 36px !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 38px !important;
+  background: transparent !important;
+  flex: 1 !important;
+}
+
+.search-filter input[type="text"]:focus,
+[class*="search-filter"] input[type="text"]:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Focus ring on the container instead */
+.search-filter:focus-within,
+[class*="search-filter"]:focus-within {
+  border-color: #0972D3 !important;
+  box-shadow: 0 0 0 2px rgba(9,114,211,0.12) !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn.btn--style-primary {
+  background: #0972D3 !important;
+  border: 1px solid #0972D3 !important;
+  border-radius: 4px !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 7px 18px !important;
+  letter-spacing: 0.01em !important;
+  transition: background 0.12s, border-color 0.12s !important;
+}
+
+.btn.btn--style-primary:hover {
+  background: #033160 !important;
+  border-color: #033160 !important;
+}
+
+.btn.btn--style-secondary {
+  background: #FFFFFF !important;
+  border: 1px solid #8D99A8 !important;
+  border-radius: 4px !important;
+  color: #000716 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 7px 18px !important;
+  transition: background 0.12s, border-color 0.12s !important;
+}
+
+.btn.btn--style-secondary:hover {
+  background: #F2F3F3 !important;
+  border-color: #0972D3 !important;
+  color: #0972D3 !important;
+}
+
+/* ── Relationship / select dropdowns ────────────────────────────────── */
+/* Target only the control wrapper, not every element with "relationship" in its name */
+.relationship-field .react-select__control,
+.react-select__control {
+  background: #FFFFFF !important;
+  border: 1px solid #8D99A8 !important;
+  border-radius: 4px !important;
+  min-height: 38px !important;
+  box-shadow: none !important;
+}
+
+.react-select__control--is-focused {
+  border-color: #0972D3 !important;
+  box-shadow: 0 0 0 2px rgba(9,114,211,0.12) !important;
+}
+
+.react-select__menu {
+  border: 1px solid #D5DBDB !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 16px rgba(0,7,22,0.10) !important;
+}
+
+.react-select__option--is-focused {
+  background: #EBF5FB !important;
+}
+
+.react-select__option--is-selected {
+  background: #0972D3 !important;
+}
+
+/* ── Hide default Payload dashboard cards (replaced by beforeDashboard) ── */
+.dashboard__card-list,
+.dashboard__group,
+.collection-card,
+[class*="dashboard__card"],
+[class*="cardList"],
+[class*="card-list"],
+[class*="Dashboard__group"],
+[class*="Dashboard__card"] {
+  display: none !important;
+}
+
+/* ── Login page — wrap form in a Cloudscape card ─────────────────────── */
+.template-minimal {
+  background: #F2F3F3 !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.template-minimal__wrap {
+  width: 100% !important;
+  max-width: 440px !important;
+  background: #FFFFFF !important;
+  border: 1px solid #D5DBDB !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 24px rgba(0, 7, 22, 0.10) !important;
+  padding: 40px 40px 36px !important;
+  margin: 0 auto !important;
+}
+
+/* Logo block above the card */
+.template-minimal__header {
+  text-align: center !important;
+  margin-bottom: 24px !important;
+}
+
+/* Form title */
+.template-minimal__wrap h1,
+.template-minimal__wrap .form-header__heading {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #000716 !important;
+  text-align: center !important;
+  margin-bottom: 24px !important;
+}
+
+/* Login button — full width */
+.template-minimal__wrap .btn.btn--style-primary {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+  border-radius: 4px !important;
+  margin-top: 8px !important;
+}
+
+/* Forgot password link */
+.template-minimal__wrap a {
+  color: #0972D3 !important;
+  font-size: 13px !important;
+}
+
+/* Input spacing */
+.template-minimal__wrap .field-type {
+  margin-bottom: 16px !important;
+}
+
+.template-minimal__wrap input {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 2px; height: 2px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #D5DBDB; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #8D99A8; }

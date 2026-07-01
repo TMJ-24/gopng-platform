@@ -1,43 +1,90 @@
-version: '3'
+version: '3.9'
+
+# ── GoPNG Website Platform ────────────────────────────────────────────────
+# Usage:
+#   Dev:        docker compose up
+#   Production: docker compose --profile prod up
+#
+# Copy .env.example → .env and fill in secrets before starting.
 
 services:
-  payload:
+  # ── PostgreSQL database ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gopng}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-gopng}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-gopng}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Development server (hot-reload) ──────────────────────────────────
+  app:
     image: node:20-alpine
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: >
+      sh -c "corepack enable &&
+             [ -f pnpm-lock.yaml ] && corepack prepare pnpm@latest --activate && pnpm install ||
+             npm install &&
+             npm run dev"
     ports:
       - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-gopng}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-gopng}
     depends_on:
-      - mongo
-      # - postgres
-    env_file:
-      - .env
+      postgres:
+        condition: service_healthy
+    profiles:
+      - dev
 
-  # Ensure your DATABASE_URL uses 'mongo' as the hostname ie. mongodb://mongo/my-db-name
-  mongo:
-    image: mongo:latest
+  # ── Production container (built from Dockerfile) ──────────────────────
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    restart: unless-stopped
     ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
-    volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - '3000:3000'
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-gopng}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-gopng}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - prod
 
-  # Uncomment the following to use postgres
-  # postgres:
-  #   restart: always
-  #   image: postgres:latest
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
+  # ── One-shot migration runner ─────────────────────────────────────────
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: sh -c "npm run payload -- migrate"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-gopng}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-gopng}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - migrate
 
 volumes:
-  data:
-  # pgdata:
+  pgdata:
   node_modules:

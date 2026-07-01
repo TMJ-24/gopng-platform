@@ -7,11 +7,19 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   images: {
     localPatterns: [
-      {
-        pathname: '/api/media/file/**',
-      },
+      { pathname: '/api/media/file/**' },
+      { pathname: '/media/**' },
+    ],
+    remotePatterns: [
+      /* Local dev — Payload serves media via its API route */
+      { protocol: 'http',  hostname: 'localhost', port: '3000', pathname: '/api/media/file/**' },
+      { protocol: 'http',  hostname: 'localhost', port: '3000', pathname: '/media/**' },
+      /* Production gov.pg subdomains */
+      { protocol: 'https', hostname: '**.gov.pg',  pathname: '/api/media/file/**' },
+      { protocol: 'https', hostname: '**.gov.pg',  pathname: '/media/**' },
     ],
   },
   webpack: (webpackConfig) => {

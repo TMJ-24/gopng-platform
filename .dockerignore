@@ -1,0 +1,17 @@
+.next
+node_modules
+.git
+.github
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+.DS_Store
+coverage
+__tests__
+playwright-report
+test-results
+README.md
+docker-compose.yml
+.eslintcache
