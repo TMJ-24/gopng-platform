@@ -84,11 +84,27 @@ jobs:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Register migration task definition with new image
+        id: register-migrate
+        run: |
+          # Download current task def, swap image, strip read-only fields, register new revision
+          MIGRATE_ARN=$(aws ecs describe-task-definition \
+            --task-definition gopng-migrate \
+            --query taskDefinition \
+            | jq --arg img "${{ needs.build-push.outputs.image }}" \
+              'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions[0].image = $img' \
+            | aws ecs register-task-definition \
+              --cli-input-json file:///dev/stdin \
+              --query 'taskDefinition.taskDefinitionArn' \
+              --output text)
+          echo "migrate-arn=$MIGRATE_ARN" >> $GITHUB_OUTPUT
+          echo "Registered migration task: $MIGRATE_ARN"
+
       - name: Run ECS migration task
         run: |
           TASK_ARN=$(aws ecs run-task \
             --cluster $ECS_CLUSTER \
-            --task-definition gopng-migrate \
+            --task-definition ${{ steps.register-migrate.outputs.migrate-arn }} \
             --network-configuration "awsvpcConfiguration={subnets=[${{ vars.ECS_SUBNETS }}],securityGroups=[${{ vars.ECS_SECURITY_GROUP }}],assignPublicIp=DISABLED}" \
             --launch-type FARGATE \
             --overrides '{"containerOverrides":[{"name":"migrate","command":["npm","run","payload","--","migrate"]}]}' \
