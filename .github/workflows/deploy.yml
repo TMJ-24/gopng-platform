@@ -108,7 +108,7 @@ jobs:
             --task-definition ${{ steps.register-migrate.outputs.migrate-arn }} \
             --network-configuration "awsvpcConfiguration={subnets=[${{ vars.ECS_SUBNETS }}],securityGroups=[${{ vars.ECS_SECURITY_GROUP }}],assignPublicIp=DISABLED}" \
             --launch-type FARGATE \
-            --overrides '{"containerOverrides":[{"name":"migrate","command":["npm","run","payload","--","migrate"]}]}' \
+            --overrides '{"containerOverrides":[{"name":"migrate","command":["node","node_modules/.bin/payload","migrate"],"environment":[{"name":"NODE_OPTIONS","value":"--no-deprecation"}]}]}' \
             --query "tasks[0].taskArn" \
             --output text)
           echo "Migration task: $TASK_ARN"
