@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   const tags = body.tags ?? []
   for (const tag of tags) {
-    revalidateTag(tag)
+    revalidateTag(tag, {})
   }
 
   return NextResponse.json({ revalidated: tags, timestamp: Date.now() })

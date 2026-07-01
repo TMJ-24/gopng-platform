@@ -149,10 +149,13 @@ export const provisionSiteRepo: CollectionAfterChangeHook = ({ doc, operation, r
   // Only run on first creation and only when the repo hasn't been set yet
   if (operation !== 'create' || doc.repoName) return doc
 
+  // Capture payload before entering async context — fixes type inference
+  const payload = req.payload
+
   // Detach from the request lifecycle — admin gets an instant response
-  provision(doc, req.payload).catch((err: unknown) => {
-    req.payload.logger.error(`[provisionSiteRepo] Unhandled error: ${err}`)
-    req.payload
+  void provision(doc, payload).catch((err: unknown) => {
+    payload.logger.error(`[provisionSiteRepo] Unhandled error: ${err}`)
+    void payload
       .update({ collection: 'sites', id: doc.id, data: { deployStatus: 'failed' }, overrideAccess: true })
       .catch(() => {})
   })
