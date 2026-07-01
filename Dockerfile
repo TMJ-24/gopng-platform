@@ -44,12 +44,16 @@ RUN adduser --system --uid 1001 nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+# Standalone server + static assets
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Payload migration files are needed at runtime for `migrate` command
+# Full node_modules so `node node_modules/.bin/payload migrate` works in the
+# migration task. Overwrites the lean standalone node_modules — the server.js
+# still works because the full set is a superset of what standalone needs.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+# Payload migration files
 COPY --from=builder --chown=nextjs:nodejs /app/src/migrations ./src/migrations
 
 USER nextjs
