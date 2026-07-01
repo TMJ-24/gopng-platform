@@ -313,7 +313,7 @@ Resources:
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub
-                  - arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistId}
+                  - arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistId}
                   - DistId: !Ref StaticSitesDistribution
 
   # -- 5. ECR --------------------------------------------------------
@@ -353,7 +353,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+              Federated: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
@@ -361,21 +361,30 @@ Resources:
               StringLike:
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/gopng-platform:*
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
       Policies:
         - PolicyName: ECSDeployAndMigrate
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
+                # DescribeTaskDefinition + RegisterTaskDefinition do not support resource-level permissions
                 Action:
                   - ecs:DescribeTaskDefinition
                   - ecs:RegisterTaskDefinition
+                Resource: '*'
+              - Effect: Allow
+                Action:
                   - ecs:UpdateService
                   - ecs:DescribeServices
+                Resource: !Sub arn:${AWS::Partition}:ecs:${AWS::Region}:${AWS::AccountId}:service/${ECSCluster}/${ECSService}
+              - Effect: Allow
+                Action:
                   - ecs:RunTask
                   - ecs:DescribeTasks
-                Resource: '*'
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ecs:${AWS::Region}:${AWS::AccountId}:task-definition/gopng-*
+                  - !Sub arn:${AWS::Partition}:ecs:${AWS::Region}:${AWS::AccountId}:task/${ECSCluster}/*
               - Effect: Allow
                 Action: iam:PassRole
                 Resource:
@@ -383,7 +392,7 @@ Resources:
                   - !GetAtt ECSTaskRole.Arn
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
+                Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
 
   # Role assumed by site-* GitHub Actions repos - S3 sync + CloudFront invalidation
   SiteDeployRole:
@@ -395,7 +404,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+              Federated: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
@@ -415,7 +424,7 @@ Resources:
                   - !Sub ${StaticSitesBucket.Arn}/*
               - Effect: Allow
                 Action: cloudfront:CreateInvalidation
-                Resource: '*'
+                Resource: !Sub arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${StaticSitesDistribution}
 
   # Execution role - allows ECS agent to pull images and read secrets
   ECSTaskExecutionRole:
@@ -429,7 +438,7 @@ Resources:
             Principal: {Service: ecs-tasks.amazonaws.com}
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
       Policies:
         - PolicyName: ReadSecrets
           PolicyDocument:
@@ -437,7 +446,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
+                Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
 
   # Task role - permissions the running app container has
   ECSTaskRole:
@@ -465,6 +474,8 @@ Resources:
 
   DatabaseURLSecret:
     Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       Name: gopng/database-url
       Description: Payload CMS PostgreSQL connection string
@@ -474,6 +485,8 @@ Resources:
 
   PayloadSecretSecret:
     Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       Name: gopng/payload-secret
       Description: Payload CMS JWT signing secret
@@ -481,6 +494,8 @@ Resources:
 
   GitHubTokenSecret:
     Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       Name: gopng/github-token
       Description: GitHub PAT for site repo provisioning
@@ -499,6 +514,8 @@ Resources:
 
   AppLogGroup:
     Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Properties:
       LogGroupName: /ecs/gopng-platform
       RetentionInDays: 30

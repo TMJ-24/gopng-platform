@@ -4,6 +4,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import nodemailer from 'nodemailer'
 
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
 export type ContactFormState = {
   success?: boolean
   error?: string
@@ -55,7 +57,7 @@ export async function submitContactForm(
         replyTo: email,
         subject: `[Contact Form] ${subject}`,
         text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
-        html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p><hr/><p>${message.replace(/\n/g, '<br/>')}</p>`,
+        html: `<p><strong>Name:</strong> ${esc(name)}</p><p><strong>Email:</strong> <a href="mailto:${esc(email)}">${esc(email)}</a></p><hr/><p>${esc(message).replace(/\n/g, '<br/>')}</p>`,
       })
     } catch {
       // Email failure is non-fatal — submission is already saved

@@ -128,8 +128,8 @@ export async function POST(req: Request) {
       adminUser: { email: siteUser.email },
       message: `${siteName} is now live at ${domain}`,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[provision-site] Error:', err)
-    return Response.json({ success: false, error: err.message }, { status: 500 })
+    return Response.json({ success: false, error: 'An internal error occurred. Please try again.' }, { status: 500 })
   }
 }
