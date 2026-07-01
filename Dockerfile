@@ -1,7 +1,7 @@
 # Payload CMS + Next.js 16 — multi-tenant GoPNG Website Platform
 # output: 'standalone' must be set in next.config.ts (already done).
 
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
