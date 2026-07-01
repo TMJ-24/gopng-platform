@@ -265,7 +265,7 @@ Resources:
     Properties:
       DBName: png_gwp
       Engine: postgres
-      EngineVersion: '16.4'
+      EngineVersion: '16.9'
       DBInstanceClass: !Ref DBInstanceClass
       AllocatedStorage: '20'
       MaxAllocatedStorage: 100
