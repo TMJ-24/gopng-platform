@@ -1,11 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
-  GoPNG Digital Platform — VPC, RDS PostgreSQL, S3, ECR, ECS Fargate,
+  GoPNG Digital Platform - VPC, RDS PostgreSQL, S3, ECR, ECS Fargate,
   ALB, CloudFront, IAM OIDC roles, Secrets Manager. Single-stack deployment.
 
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 # PARAMETERS
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 Parameters:
 
   DBPassword:
@@ -18,7 +18,7 @@ Parameters:
     Type: String
     NoEcho: true
     MinLength: 32
-    Description: Payload CMS JWT secret — use `openssl rand -base64 48`
+    Description: Payload CMS JWT secret - use `openssl rand -base64 48`
 
   GitHubToken:
     Type: String
@@ -68,18 +68,18 @@ Parameters:
       Set false if the GitHub Actions OIDC provider already exists in
       this AWS account (only one per account is allowed).
 
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 # CONDITIONS
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 Conditions:
   ShouldCreateOIDC: !Equals [!Ref CreateOIDCProvider, 'true']
 
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 # RESOURCES
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
 Resources:
 
-  # ── 1. VPC & NETWORKING ───────────────────────────────────────────
+  # -- 1. VPC & NETWORKING -------------------------------------------
 
   VPC:
     Type: AWS::EC2::VPC
@@ -100,7 +100,7 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
-  # Public subnets — ALB lives here
+  # Public subnets - ALB lives here
   PublicSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
@@ -119,7 +119,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags: [{Key: Name, Value: gopng-public-b}]
 
-  # Private subnets — ECS tasks and RDS live here
+  # Private subnets - ECS tasks and RDS live here
   PrivateSubnetA:
     Type: AWS::EC2::Subnet
     Properties:
@@ -136,7 +136,7 @@ Resources:
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags: [{Key: Name, Value: gopng-private-b}]
 
-  # NAT Gateway — allows private subnets to reach internet (ECR, GitHub)
+  # NAT Gateway - allows private subnets to reach internet (ECR, GitHub)
   NATElasticIP:
     Type: AWS::EC2::EIP
     DependsOn: IGWAttachment
@@ -202,7 +202,7 @@ Resources:
       SubnetId: !Ref PrivateSubnetB
       RouteTableId: !Ref PrivateRouteTable
 
-  # S3 Gateway endpoint — routes S3 traffic within AWS, bypasses NAT (free)
+  # S3 Gateway endpoint - routes S3 traffic within AWS, bypasses NAT (free)
   S3GatewayEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -212,12 +212,12 @@ Resources:
       RouteTableIds:
         - !Ref PrivateRouteTable
 
-  # ── 2. SECURITY GROUPS ────────────────────────────────────────────
+  # -- 2. SECURITY GROUPS --------------------------------------------
 
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: ALB — HTTP/HTTPS inbound from internet
+      GroupDescription: ALB - HTTP/HTTPS inbound from internet
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - {IpProtocol: tcp, FromPort: 80,  ToPort: 80,  CidrIp: 0.0.0.0/0}
@@ -227,7 +227,7 @@ Resources:
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: ECS tasks — port 3000 from ALB only
+      GroupDescription: ECS tasks - port 3000 from ALB only
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -239,7 +239,7 @@ Resources:
   RDSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: RDS — PostgreSQL from ECS only
+      GroupDescription: RDS - PostgreSQL from ECS only
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -248,7 +248,7 @@ Resources:
           SourceSecurityGroupId: !Ref ECSSecurityGroup
       Tags: [{Key: Name, Value: sg-rds}]
 
-  # ── 3. RDS POSTGRESQL ─────────────────────────────────────────────
+  # -- 3. RDS POSTGRESQL ---------------------------------------------
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -281,7 +281,7 @@ Resources:
       BackupRetentionPeriod: 7
       EnablePerformanceInsights: false
 
-  # ── 4. S3 BUCKETS ─────────────────────────────────────────────────
+  # -- 4. S3 BUCKETS -------------------------------------------------
 
   MediaBucket:
     Type: AWS::S3::Bucket
@@ -327,7 +327,7 @@ Resources:
                   - arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistId}
                   - DistId: !Ref StaticSitesDistribution
 
-  # ── 5. ECR ────────────────────────────────────────────────────────
+  # -- 5. ECR --------------------------------------------------------
 
   ECRRepository:
     Type: AWS::ECR::Repository
@@ -341,7 +341,7 @@ Resources:
           "selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":10},
           "action":{"type":"expire"}}]}
 
-  # ── 6. IAM — OIDC PROVIDER & ROLES ───────────────────────────────
+  # -- 6. IAM - OIDC PROVIDER & ROLES -------------------------------
 
   GitHubOIDCProvider:
     Type: AWS::IAM::OIDCProvider
@@ -354,7 +354,7 @@ Resources:
         - 6938fd4d98bab03faadb97b34396831e3780aea1
         - 1c58a3a8518e8759bf075b76b750d4f2df264fcd
 
-  # Role assumed by gopng-platform GitHub Actions — ECR + ECS deploy
+  # Role assumed by gopng-platform GitHub Actions - ECR + ECS deploy
   PlatformDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -396,7 +396,7 @@ Resources:
                 Action: secretsmanager:GetSecretValue
                 Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
 
-  # Role assumed by site-* GitHub Actions repos — S3 sync + CloudFront invalidation
+  # Role assumed by site-* GitHub Actions repos - S3 sync + CloudFront invalidation
   SiteDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -412,7 +412,7 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
-                # Wildcard covers every site repo (site-health-gov-pg, site-finance-gov-pg, …)
+                # Wildcard covers every site repo (site-health-gov-pg, site-finance-gov-pg, -)
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/site-*:*
       Policies:
         - PolicyName: SiteDeployPolicy
@@ -428,7 +428,7 @@ Resources:
                 Action: cloudfront:CreateInvalidation
                 Resource: '*'
 
-  # Execution role — allows ECS agent to pull images and read secrets
+  # Execution role - allows ECS agent to pull images and read secrets
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -450,7 +450,7 @@ Resources:
                 Action: secretsmanager:GetSecretValue
                 Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:gopng/*
 
-  # Task role — permissions the running app container has
+  # Task role - permissions the running app container has
   ECSTaskRole:
     Type: AWS::IAM::Role
     Properties:
@@ -472,7 +472,7 @@ Resources:
                   - !GetAtt MediaBucket.Arn
                   - !Sub ${MediaBucket.Arn}/*
 
-  # ── 7. SECRETS MANAGER ────────────────────────────────────────────
+  # -- 7. SECRETS MANAGER --------------------------------------------
 
   DatabaseURLSecret:
     Type: AWS::SecretsManager::Secret
@@ -497,7 +497,7 @@ Resources:
       Description: GitHub PAT for site repo provisioning
       SecretString: !Ref GitHubToken
 
-  # ── 8. ECS CLUSTER + TASK DEFINITIONS + SERVICE ───────────────────
+  # -- 8. ECS CLUSTER + TASK DEFINITIONS + SERVICE -------------------
 
   ECSCluster:
     Type: AWS::ECS::Cluster
@@ -527,7 +527,7 @@ Resources:
       TaskRoleArn: !GetAtt ECSTaskRole.Arn
       ContainerDefinitions:
         - Name: app
-          # Placeholder — CI/CD replaces this with the real ECR image on first deploy
+          # Placeholder - CI/CD replaces this with the real ECR image on first deploy
           Image: public.ecr.aws/docker/library/node:20-alpine
           Command: ['node', '-e', 'require("http").createServer((_,r)=>{r.end("ok")}).listen(3000)']
           PortMappings:
@@ -565,7 +565,7 @@ Resources:
             Retries: 3
             StartPeriod: 90
 
-  # One-off migration task definition — run by CI/CD before each deploy
+  # One-off migration task definition - run by CI/CD before each deploy
   MigrationTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -579,7 +579,7 @@ Resources:
       ContainerDefinitions:
         - Name: migrate
           Image: public.ecr.aws/docker/library/node:20-alpine
-          Command: ['echo', 'placeholder — CI/CD updates this image']
+          Command: ['echo', 'placeholder - CI/CD updates this image']
           Essential: true
           LogConfiguration:
             LogDriver: awslogs
@@ -621,7 +621,7 @@ Resources:
         MaximumPercent: 200
       HealthCheckGracePeriodSeconds: 120
 
-  # ── 9. APPLICATION LOAD BALANCER ──────────────────────────────────
+  # -- 9. APPLICATION LOAD BALANCER ----------------------------------
 
   ALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -660,9 +660,9 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref ALBTargetGroup
 
-  # ── 10. CLOUDFRONT — STATIC GOVERNMENT SITES ──────────────────────
+  # -- 10. CLOUDFRONT - STATIC GOVERNMENT SITES ----------------------
 
-  # Origin Access Control — restricts S3 access to CloudFront only
+  # Origin Access Control - restricts S3 access to CloudFront only
   StaticSitesOAC:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
@@ -672,7 +672,7 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
 
-  # CloudFront Function — rewrites /path/to/dir → /path/to/dir/index.html
+  # CloudFront Function - rewrites /path/to/dir - /path/to/dir/index.html
   # Required because Next.js static export uses directory-based routing
   IndexRewriteFunction:
     Type: AWS::CloudFront::Function
@@ -724,20 +724,20 @@ Resources:
             ResponsePagePath: /404.html
             ErrorCachingMinTTL: 10
 
-# ══════════════════════════════════════════════════════════════════════
-# OUTPUTS — copy these into GitHub secrets / Actions variables
-# ══════════════════════════════════════════════════════════════════════
+# ----------------------------------------------------------------------
+# OUTPUTS - copy these into GitHub secrets / Actions variables
+# ----------------------------------------------------------------------
 Outputs:
 
   ALBDNSName:
     Description: >
-      Point your admin domain CNAME here (e.g. cms.digital.gov.pg → this value).
+      Point your admin domain CNAME here (e.g. cms.digital.gov.pg - this value).
       Add as HTTPS once ACM cert is issued.
     Value: !GetAtt ALB.DNSName
 
   CloudFrontDomain:
     Description: >
-      Point each agency domain CNAME here (e.g. health.gov.pg → this value).
+      Point each agency domain CNAME here (e.g. health.gov.pg - this value).
     Value: !GetAtt StaticSitesDistribution.DomainName
 
   CloudFrontDistributionId:
@@ -775,5 +775,5 @@ Outputs:
     Value: !Ref StaticSitesBucket
 
   RDSEndpoint:
-    Description: RDS hostname — included in DATABASE_URL secret automatically.
+    Description: RDS hostname - included in DATABASE_URL secret automatically.
     Value: !GetAtt RDSInstance.Endpoint.Address
