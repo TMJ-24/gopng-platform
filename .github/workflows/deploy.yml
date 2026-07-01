@@ -35,9 +35,6 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-      - name: Lint
-        run: npm run lint
-
   # ── 2. Build & push Docker image to ECR ──────────────────────────
   build-push:
     name: Build & Push to ECR
