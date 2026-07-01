@@ -535,7 +535,6 @@ Resources:
         - Name: app
           # Placeholder - CI/CD replaces this with the real ECR image on first deploy
           Image: public.ecr.aws/docker/library/node:20-alpine
-          Command: ['node', '-e', 'require("http").createServer((_,r)=>{r.end("ok")}).listen(3000)']
           PortMappings:
             - ContainerPort: 3000
               Protocol: tcp
