@@ -480,7 +480,7 @@ Resources:
       Name: gopng/database-url
       Description: Payload CMS PostgreSQL connection string
       SecretString: !Sub
-        - "postgres://postgres:${DBPassword}@${Host}:5432/png_gwp"
+        - "postgres://postgres:${DBPassword}@${Host}:5432/png_gwp?sslmode=require&uselibpqcompat=true"
         - Host: !GetAtt RDSInstance.Endpoint.Address
 
   PayloadSecretSecret:
