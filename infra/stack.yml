@@ -38,7 +38,7 @@ Parameters:
   PayloadURL:
     Type: String
     Default: ''
-    Description: Public URL of the admin (e.g. https://admin.platform.gov.pg)
+    Description: Public URL of the admin (e.g. https://cms.digital.gov.pg)
 
   DBInstanceClass:
     Type: String
@@ -731,7 +731,7 @@ Outputs:
 
   ALBDNSName:
     Description: >
-      Point your admin domain CNAME here (e.g. admin.platform.gov.pg → this value).
+      Point your admin domain CNAME here (e.g. cms.digital.gov.pg → this value).
       Add as HTTPS once ACM cert is issued.
     Value: !GetAtt ALB.DNSName
 
