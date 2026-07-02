@@ -109,20 +109,19 @@ jobs:
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
             --query "tasks[0].containers[0].{exitCode:exitCode,lastStatus:lastStatus,reason:reason,stopCode:stopCode}" \
             --output json
+          # Stream format: {awslogs-stream-prefix}/{container-name}/{task-id}
+          # task def has awslogs-stream-prefix=migrate, container-name=migrate → migrate/migrate/{task-id}
+          # Log group is AppLogGroup = /ecs/gopng-platform (both app and migrate tasks share it)
           echo "=== Migration container logs ==="
           aws logs filter-log-events \
-            --log-group-name /ecs/gopng-migrate \
-            --log-stream-names "ecs/migrate/${TASK_ID}" \
+            --log-group-name /ecs/gopng-platform \
+            --log-stream-names "migrate/migrate/${TASK_ID}" \
             --output text 2>&1 \
           || aws logs get-log-events \
-            --log-group-name /ecs/gopng-migrate \
-            --log-stream-name "ecs/migrate/${TASK_ID}" \
-            --output text 2>&1 \
-          || aws logs filter-log-events \
             --log-group-name /ecs/gopng-platform \
-            --log-stream-names "ecs/migrate/${TASK_ID}" \
+            --log-stream-name "migrate/migrate/${TASK_ID}" \
             --output text 2>&1 \
-          || echo "(CloudWatch access denied — grant logs:FilterLogEvents or logs:GetLogEvents to gopng-platform-deploy, or check https://ap-southeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-southeast-2#logsV2:log-groups/log-group/%2Fecs%2Fgopng-migrate)"
+          || echo "(CloudWatch access denied — check /ecs/gopng-platform → migrate/migrate/${TASK_ID} in AWS console, or add logs:FilterLogEvents to gopng-platform-deploy role)"
           echo "=== End migration logs ==="
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
