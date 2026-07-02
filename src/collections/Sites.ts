@@ -10,9 +10,6 @@ export const Sites: CollectionConfig = {
     defaultColumns: ['name', 'domain', 'agencyType', 'status'],
     components: {
       beforeListTable: ['/components/admin/CollectionListHeader#CollectionListHeader'],
-      edit: {
-        beforeFields: ['/components/admin/RedeployButton#RedeployButton'],
-      },
     },
   },
   access: {
@@ -25,6 +22,15 @@ export const Sites: CollectionConfig = {
     afterChange: [provisionSiteRepo, revalidateAfterChange(['sites'])],
   },
   fields: [
+    {
+      name: 'deployActions',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/admin/RedeployButton#RedeployButton',
+        },
+      },
+    },
     { name: 'name', type: 'text', required: true, localized: true },
     {
       name: 'slug',
