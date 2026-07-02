@@ -99,7 +99,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
   } as React.CSSProperties
 
   return (
-    <html lang={locale === 'tpi' ? 'tpi' : 'en'} style={themeVars} className={inter.className}>
+    <html lang={locale === 'tpi' ? 'tpi' : 'en'} style={themeVars} className={`${inter.variable} ${inter.className}`}>
       <body className="min-h-screen flex flex-col bg-white">
         <SiteProvider site={site}>
           <Suspense>

@@ -77,10 +77,10 @@ export function NewsSection() {
 
         {/* Section header */}
         <div style={{ marginBottom: 32 }}>
-          <h2 style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#111111', margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#111111', margin: '0 0 10px', letterSpacing: '-0.01em' }}>
             Latest News &amp; Announcements
           </h2>
-          <p style={{ fontSize: 14, color: '#555555', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
+          <p style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 14, fontWeight: 400, color: '#555555', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
             Official news, press releases and announcements from {site?.name ?? 'the Government of Papua New Guinea'}.
           </p>
         </div>

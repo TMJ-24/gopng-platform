@@ -42,7 +42,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
               </div>
             )}
             <div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
+              <div style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
               {site.domain && (
                 <div style={{ fontSize: 10, color: '#888888' }}>{site.domain}</div>
               )}
@@ -57,6 +57,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                 href={link.href}
                 target={(link as any).openInNewTab ? '_blank' : undefined}
                 style={{
+                  fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
                   fontSize: 14, fontWeight: 500, color: '#333333',
                   padding: '0 14px', height: 64, display: 'flex', alignItems: 'center',
                   textDecoration: 'none', whiteSpace: 'nowrap',

@@ -27,17 +27,21 @@ export function HeroSection() {
       }}>
         <div style={{ maxWidth: 480 }}>
           <h1 style={{
+            fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'clamp(28px, 3.5vw, 48px)',
             fontWeight: 800,
             color: '#ffffff',
             lineHeight: 1.15,
             margin: '0 0 16px',
             letterSpacing: '-0.02em',
+            fontOpticalSizing: 'auto' as any,
           }}>
             {site.name}
           </h1>
           <p style={{
+            fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'clamp(14px, 1.4vw, 17px)',
+            fontWeight: 400,
             color: 'rgba(255,255,255,0.85)',
             lineHeight: 1.65,
             margin: '0 0 28px',
