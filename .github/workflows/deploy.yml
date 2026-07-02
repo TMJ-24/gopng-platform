@@ -95,10 +95,26 @@ jobs:
           echo "Registered migration task: $MIGRATE_ARN"
       - name: Run ECS migration task
         run: |
+          # Fetch secrets using the deploy role's Secrets Manager access.
+          # This injects them directly via override, bypassing broken secret
+          # injection in the live task definition (execution role may lack
+          # GetSecretValue if the CF stack hasn't been redeployed with the
+          # updated ReadSecrets policy).
+          PAYLOAD_SECRET=$(aws secretsmanager get-secret-value \
+            --secret-id gopng/payload-secret \
+            --query SecretString --output text)
+          DATABASE_URL=$(aws secretsmanager get-secret-value \
+            --secret-id gopng/database-url \
+            --query SecretString --output text)
+          if [ -z "$PAYLOAD_SECRET" ]; then echo "ERROR: gopng/payload-secret is empty"; exit 1; fi
+          if [ -z "$DATABASE_URL" ]; then echo "ERROR: gopng/database-url is empty"; exit 1; fi
+          echo "Secrets fetched: PAYLOAD_SECRET(${#PAYLOAD_SECRET} chars) DATABASE_URL(${#DATABASE_URL} chars)"
           OVERRIDE_JSON=$(jq -n \
             --arg name "${{ steps.register-migrate.outputs.container-name }}" \
-            '{"containerOverrides":[{"name":$name,"command":["node","node_modules/.bin/payload","migrate"],"environment":[{"name":"NODE_OPTIONS","value":"--no-deprecation"}]}]}')
-          echo "Using container override: $OVERRIDE_JSON"
+            --arg ps "$PAYLOAD_SECRET" \
+            --arg db "$DATABASE_URL" \
+            '{"containerOverrides":[{"name":$name,"command":["node","node_modules/.bin/payload","migrate"],"environment":[{"name":"NODE_OPTIONS","value":"--no-deprecation"},{"name":"PAYLOAD_SECRET","value":$ps},{"name":"DATABASE_URL","value":$db}]}]}')
+          echo "Using container override (secrets redacted)"
           TASK_ARN=$(aws ecs run-task \
             --cluster $ECS_CLUSTER \
             --task-definition ${{ steps.register-migrate.outputs.migrate-arn }} \
