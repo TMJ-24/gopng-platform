@@ -20,7 +20,10 @@ export function HeroSection() {
         background: 'var(--color-primary, #CC0000)',
         display: 'flex',
         alignItems: 'center',
-        padding: 'clamp(40px, 6vw, 80px) clamp(28px, 5vw, 64px)',
+        paddingTop: 'clamp(40px, 6vw, 80px)',
+        paddingBottom: 'clamp(40px, 6vw, 80px)',
+        paddingRight: 'clamp(28px, 4vw, 56px)',
+        paddingLeft: 'max(24px, calc((100vw - 1280px) / 2 + 24px))',
       }}>
         <div style={{ maxWidth: 480 }}>
           <h1 style={{
