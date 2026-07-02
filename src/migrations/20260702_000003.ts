@@ -1,22 +1,37 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-// Applies departments.site_id schema for fresh installs.
-// All operations are idempotent — safe to run against production
-// where the column was already applied manually.
 export async function up({ db }: MigrateUpArgs): Promise<void> {
-  await db.execute(sql`ALTER TABLE "departments" ADD COLUMN IF NOT EXISTS "site_id" integer`)
+  // 1. Add column — no-op if already exists
+  await db.execute(sql`
+    ALTER TABLE "departments" ADD COLUMN IF NOT EXISTS "site_id" integer
+  `)
 
-  try {
+  // 2. Remove any orphaned site_id values so the FK constraint can be applied
+  //    (rows referencing a site that no longer exists would block ADD CONSTRAINT)
+  await db.execute(sql`
+    UPDATE "departments"
+    SET "site_id" = NULL
+    WHERE "site_id" IS NOT NULL
+      AND "site_id" NOT IN (SELECT id FROM "sites")
+  `)
+
+  // 3. Add FK constraint only if it does not already exist
+  const existing = await db.execute(sql`
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_schema = 'public'
+      AND table_name        = 'departments'
+      AND constraint_name   = 'departments_site_id_sites_id_fk'
+  `)
+  if ((existing as any).rows?.length === 0) {
     await db.execute(sql`
       ALTER TABLE "departments"
         ADD CONSTRAINT "departments_site_id_sites_id_fk"
         FOREIGN KEY ("site_id") REFERENCES "public"."sites"("id")
         ON DELETE set null ON UPDATE no action
     `)
-  } catch (e: any) {
-    if (!String(e?.message ?? e).includes('already exists')) throw e
   }
 
+  // 4. Create index — no-op if already exists
   await db.execute(sql`
     CREATE INDEX IF NOT EXISTS "departments_site_idx"
       ON "departments" USING btree ("site_id")
@@ -26,14 +41,20 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
 export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`DROP INDEX IF EXISTS "departments_site_idx"`)
 
-  try {
+  const existing = await db.execute(sql`
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_schema = 'public'
+      AND table_name        = 'departments'
+      AND constraint_name   = 'departments_site_id_sites_id_fk'
+  `)
+  if ((existing as any).rows?.length > 0) {
     await db.execute(sql`
       ALTER TABLE "departments"
         DROP CONSTRAINT "departments_site_id_sites_id_fk"
     `)
-  } catch (e: any) {
-    if (!String(e?.message ?? e).includes('does not exist')) throw e
   }
 
-  await db.execute(sql`ALTER TABLE "departments" DROP COLUMN IF EXISTS "site_id"`)
+  await db.execute(sql`
+    ALTER TABLE "departments" DROP COLUMN IF EXISTS "site_id"
+  `)
 }
