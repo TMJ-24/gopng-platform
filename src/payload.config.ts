@@ -68,7 +68,9 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      // Accept both DATABASE_URL (standard) and DATABASE_URI (older convention)
+      // so the migration task definition works regardless of which name was set.
+      connectionString: process.env.DATABASE_URL || process.env.DATABASE_URI || '',
     },
   }),
   // Only enable SMTP when a host is explicitly configured.
