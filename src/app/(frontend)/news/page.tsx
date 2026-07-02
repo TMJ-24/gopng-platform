@@ -38,8 +38,9 @@ export default function NewsPage() {
     <>
       <PageBanner
         title="News & Media"
+        subtitle="Official news, press releases and announcements."
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'News & Media' }]}
-        aside={!loading ? `${totalDocs} article${totalDocs !== 1 ? 's' : ''} published` : undefined}
+        searchPlaceholder="Start typing to search"
       />
 
       <div style={{ background: '#F2F3F3', borderBottom: '1px solid #D5DBDB' }}>

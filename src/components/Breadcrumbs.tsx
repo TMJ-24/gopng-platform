@@ -2,28 +2,42 @@ import Link from 'next/link'
 
 type Crumb = { label: string; href?: string }
 
-export function Breadcrumbs({ items, light }: { items: Crumb[]; light?: boolean }) {
-  const base = light ? 'text-white/60' : 'text-gray-500'
-  const hover = light ? 'hover:text-white' : 'hover:text-[--color-secondary]'
-  const active = light ? 'text-white font-medium' : 'text-gray-700 font-medium'
-  const sep = light ? 'text-white/30' : 'text-gray-300'
+const FONT = '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
+export function Breadcrumbs({ items }: { items: Crumb[] }) {
   return (
-    <nav aria-label="Breadcrumb" className={`text-sm ${base} mb-0`}>
-      <ol className="flex flex-wrap items-center gap-1">
+    <nav aria-label="Breadcrumb">
+      <ol style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0 6px', listStyle: 'none', margin: 0, padding: 0 }}>
         {items.map((item, i) => (
-          <li key={i} className="flex items-center gap-1">
-            {i > 0 && <span className={sep}>/</span>}
+          <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {i > 0 && (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ flexShrink: 0, color: '#aaa' }}>
+                <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
             {item.href ? (
-              <Link href={item.href} className={`${hover} transition-colors`}>
+              <Link
+                href={item.href}
+                style={{
+                  fontFamily: FONT,
+                  fontSize: '0.875rem',
+                  color: '#4a6fa5',
+                  textDecoration: 'none',
+                  fontWeight: 400,
+                }}
+                className="breadcrumb-link"
+              >
                 {item.label}
               </Link>
             ) : (
-              <span className={active}>{item.label}</span>
+              <span style={{ fontFamily: FONT, fontSize: '0.875rem', color: '#555', fontWeight: 500 }}>
+                {item.label}
+              </span>
             )}
           </li>
         ))}
       </ol>
+      <style>{`.breadcrumb-link:hover { text-decoration: underline; }`}</style>
     </nav>
   )
 }
