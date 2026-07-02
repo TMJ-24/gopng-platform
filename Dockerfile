@@ -53,6 +53,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # the full set is a superset.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
+# Utility scripts (reset-admin etc) for one-off ECS tasks
+COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
+
 # Source files + tsconfig required by `payload migrate` at runtime.
 # The payload CLI uses tsconfig-paths to resolve @payload-config -> src/payload.config.ts,
 # and tsx (bundled in payload's deps) to transpile it. Without these the CLI
