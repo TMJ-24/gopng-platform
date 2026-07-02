@@ -40,7 +40,7 @@ export function HeroSection() {
           </h1>
           <p style={{
             fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            fontSize: 'clamp(14px, 1.4vw, 17px)',
+            fontSize: 'clamp(16px, 1.5vw, 18px)',
             fontWeight: 400,
             color: 'rgba(255,255,255,0.85)',
             lineHeight: 1.65,
