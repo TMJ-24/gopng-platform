@@ -58,7 +58,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                 target={(link as any).openInNewTab ? '_blank' : undefined}
                 style={{
                   fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-                  fontSize: 14, fontWeight: 500, color: '#333333',
+                  fontSize: '1rem', fontWeight: 500, color: '#333333',
                   padding: '0 14px', height: 64, display: 'flex', alignItems: 'center',
                   textDecoration: 'none', whiteSpace: 'nowrap',
                 }}

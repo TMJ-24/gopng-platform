@@ -37,9 +37,9 @@ function NewsCard({ item }: { item: any }) {
       {/* Text */}
       <div style={{ padding: '16px 0', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {date && (
-          <span style={{ fontSize: 12, color: '#888888', marginBottom: 8, display: 'block' }}>{date}</span>
+          <span style={{ fontSize: '0.875rem', color: '#888888', marginBottom: 8, display: 'block' }}>{date}</span>
         )}
-        <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111111', lineHeight: 1.45, margin: '0 0 10px', flex: 1 }} className="news-card-title line-clamp-3">
+        <h3 style={{ fontSize: 'calc(1.275rem + 0.3vw)', fontWeight: 700, color: '#111111', lineHeight: 1.35, margin: '0 0 12px', flex: 1 }} className="news-card-title line-clamp-3">
           {title}
         </h3>
         <span style={{ fontSize: 13, color: 'var(--color-primary, #CC0000)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -77,10 +77,10 @@ export function NewsSection() {
 
         {/* Section header */}
         <div style={{ marginBottom: 32 }}>
-          <h2 style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#111111', margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 'calc(1.325rem + 0.9vw)', fontWeight: 800, color: '#111111', margin: '0 0 12px', letterSpacing: '-0.01em' }}>
             Latest News &amp; Announcements
           </h2>
-          <p style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 16, fontWeight: 400, color: '#555555', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
+          <p style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1rem', fontWeight: 400, color: '#555555', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
             Official news, press releases and announcements from {site?.name ?? 'the Government of Papua New Guinea'}.
           </p>
         </div>
