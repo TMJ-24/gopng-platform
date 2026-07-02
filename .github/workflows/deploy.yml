@@ -17,90 +17,71 @@ permissions:
   contents: read
 
 jobs:
-  # ── 1. Type-check & lint ──────────────────────────────────────────
   check:
     name: Type-check & Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
       - name: TypeScript check
         run: npx tsc --noEmit
 
-  # ── 2. Build & push Docker image to ECR ──────────────────────────
   build-push:
     name: Build & Push to ECR
     runs-on: ubuntu-latest
     needs: check
     outputs:
       image: ${{ steps.build-image.outputs.image }}
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-
       - name: Build, tag, and push image
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
-            .
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  # ── 3. Run DB migrations ──────────────────────────────────────────
   migrate:
     name: Run DB Migrations
     runs-on: ubuntu-latest
     needs: build-push
-
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-
       - name: Register migration task definition with new image
         id: register-migrate
         run: |
-          # Download, patch image, strip read-only fields, save to file, register
-          aws ecs describe-task-definition \
-            --task-definition gopng-migrate \
-            --query taskDefinition \
+          aws ecs describe-task-definition --task-definition gopng-migrate --query taskDefinition \
             | jq --arg img "${{ needs.build-push.outputs.image }}" \
               'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions[0].image = $img' \
             > /tmp/migrate-task-def.json
           MIGRATE_ARN=$(aws ecs register-task-definition \
             --cli-input-json file:///tmp/migrate-task-def.json \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text)
+            --query 'taskDefinition.taskDefinitionArn' --output text)
           echo "migrate-arn=$MIGRATE_ARN" >> $GITHUB_OUTPUT
           echo "Registered migration task: $MIGRATE_ARN"
-
       - name: Run ECS migration task
         run: |
           TASK_ARN=$(aws ecs run-task \
@@ -109,42 +90,42 @@ jobs:
             --network-configuration "awsvpcConfiguration={subnets=[${{ vars.ECS_SUBNETS }}],securityGroups=[${{ vars.ECS_SECURITY_GROUP }}],assignPublicIp=DISABLED}" \
             --launch-type FARGATE \
             --overrides '{"containerOverrides":[{"name":"migrate","command":["node","node_modules/.bin/payload","migrate"],"environment":[{"name":"NODE_OPTIONS","value":"--no-deprecation"}]}]}' \
-            --query "tasks[0].taskArn" \
-            --output text)
+            --query "tasks[0].taskArn" --output text)
           echo "Migration task: $TASK_ARN"
-          aws ecs wait tasks-stopped \
-            --cluster $ECS_CLUSTER \
-            --tasks $TASK_ARN
+          TASK_ID="${TASK_ARN##*/}"
+          aws ecs wait tasks-stopped --cluster $ECS_CLUSTER --tasks $TASK_ARN
+          echo "=== Migration container logs ==="
+          aws logs get-log-events \
+            --log-group-name /ecs/gopng-migrate \
+            --log-stream-name "ecs/migrate/${TASK_ID}" \
+            --output text 2>&1 \
+          || aws logs get-log-events \
+            --log-group-name /ecs/gopng-platform \
+            --log-stream-name "ecs/migrate/${TASK_ID}" \
+            --output text 2>&1 \
+          || echo "(logs not found for task ${TASK_ID} — check AWS console)"
+          echo "=== End migration logs ==="
           EXIT_CODE=$(aws ecs describe-tasks \
-            --cluster $ECS_CLUSTER \
-            --tasks $TASK_ARN \
-            --query "tasks[0].containers[0].exitCode" \
-            --output text)
+            --cluster $ECS_CLUSTER --tasks $TASK_ARN \
+            --query "tasks[0].containers[0].exitCode" --output text)
           echo "Migration exit code: $EXIT_CODE"
           [ "$EXIT_CODE" = "0" ] || exit 1
 
-  # ── 4. Deploy to ECS Fargate ──────────────────────────────────────
   deploy:
     name: Deploy to ECS Fargate
     runs-on: ubuntu-latest
     needs: [build-push, migrate]
-
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-
       - name: Download current task definition
         run: |
-          aws ecs describe-task-definition \
-            --task-definition gopng-platform \
-            --query taskDefinition \
-            | jq 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)
-                  | .containerDefinitions[0] |= del(.command)' \
+          aws ecs describe-task-definition --task-definition gopng-platform --query taskDefinition \
+            | jq 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions[0] |= del(.command)' \
             > task-definition.json
-
       - name: Update task definition with new image
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -152,7 +133,6 @@ jobs:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ needs.build-push.outputs.image }}
-
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
@@ -160,18 +140,12 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-
       - name: Scale service up on first deploy
         run: |
           DESIRED=$(aws ecs describe-services \
-            --cluster $ECS_CLUSTER \
-            --services $ECS_SERVICE \
-            --query "services[0].desiredCount" \
-            --output text)
+            --cluster $ECS_CLUSTER --services $ECS_SERVICE \
+            --query "services[0].desiredCount" --output text)
           if [ "$DESIRED" = "0" ]; then
-            aws ecs update-service \
-              --cluster $ECS_CLUSTER \
-              --service $ECS_SERVICE \
-              --desired-count 1
+            aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --desired-count 1
             echo "Scaled service from 0 to 1"
           fi
