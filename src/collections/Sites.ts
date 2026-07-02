@@ -10,6 +10,9 @@ export const Sites: CollectionConfig = {
     defaultColumns: ['name', 'domain', 'agencyType', 'status'],
     components: {
       beforeListTable: ['/components/admin/CollectionListHeader#CollectionListHeader'],
+      edit: {
+        beforeFields: ['/components/admin/RedeployButton#RedeployButton'],
+      },
     },
   },
   access: {

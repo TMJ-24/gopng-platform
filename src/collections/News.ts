@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { adminOnly, contentAccess, publicRead } from '@/access'
 import { revalidateAfterChange, siteTag } from '@/hooks/revalidate'
+import { triggerSiteDeploy } from '@/hooks/triggerSiteDeploy'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -18,7 +19,7 @@ export const News: CollectionConfig = {
     delete: adminOnly,
   },
   hooks: {
-    afterChange: [revalidateAfterChange((doc) => ['news', siteTag(doc)])],
+    afterChange: [revalidateAfterChange((doc) => ['news', siteTag(doc)]), triggerSiteDeploy],
   },
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },
