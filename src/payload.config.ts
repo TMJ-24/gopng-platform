@@ -71,18 +71,26 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  email: nodemailerAdapter({
-    defaultFromAddress: process.env.SMTP_FROM || 'noreply@gov.pg',
-    defaultFromName: process.env.SMTP_FROM_NAME || 'GoPNG Website Platform',
-    transportOptions: {
-      host: process.env.SMTP_HOST || 'localhost',
-      port: Number(process.env.SMTP_PORT || 587),
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    },
-  }),
+  // Only enable SMTP when a host is explicitly configured.
+  // Skipping this in migration / build environments (no SMTP_HOST set)
+  // prevents nodemailerAdapter.verify() from throwing ECONNREFUSED and
+  // crashing Payload before any migration runs.
+  ...(process.env.SMTP_HOST
+    ? {
+        email: nodemailerAdapter({
+          defaultFromAddress: process.env.SMTP_FROM || 'noreply@gov.pg',
+          defaultFromName: process.env.SMTP_FROM_NAME || 'GoPNG Website Platform',
+          transportOptions: {
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT || 587),
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS,
+            },
+          },
+        }),
+      }
+    : {}),
   sharp,
   plugins: [
     s3Storage({
