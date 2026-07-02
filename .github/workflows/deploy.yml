@@ -78,7 +78,7 @@ jobs:
               'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions[0].image = $img' \
             > /tmp/migrate-task-def.json
           echo "=== Task definition diagnostics (names only, no secret values) ==="
-          jq '{containers: [.containerDefinitions[] | {name: .name, command: .command, env_var_names: [.environment[]?.name]}]}' /tmp/migrate-task-def.json
+          jq '{containers: [.containerDefinitions[] | {name: .name, command: .command, env_var_names: [.environment[]?.name], log_config: .logConfiguration}]}' /tmp/migrate-task-def.json
           echo "=== End diagnostics ==="
           # Capture the actual container name so the override matches exactly
           CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' /tmp/migrate-task-def.json)
@@ -104,11 +104,20 @@ jobs:
           echo "Migration task: $TASK_ARN"
           TASK_ID="${TASK_ARN##*/}"
           aws ecs wait tasks-stopped --cluster $ECS_CLUSTER --tasks $TASK_ARN
-          echo "=== Container stop details ==="
+          echo "=== Task stop details ==="
           aws ecs describe-tasks \
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
-            --query "tasks[0].containers[0].{exitCode:exitCode,lastStatus:lastStatus,reason:reason,stopCode:stopCode}" \
+            --query "tasks[0].{taskStopCode:stopCode,taskStoppedReason:stoppedReason,container:containers[0].{exitCode:exitCode,reason:reason,stopCode:stopCode}}" \
             --output json
+          echo "=== Recent log streams with migrate prefix ==="
+          aws logs describe-log-streams \
+            --log-group-name /ecs/gopng-platform \
+            --log-stream-name-prefix migrate \
+            --order-by LastEventTime \
+            --descending \
+            --limit 10 \
+            --query 'logStreams[*].logStreamName' \
+            --output text 2>&1 || echo "(describe-log-streams failed)"
           # Stream format: {awslogs-stream-prefix}/{container-name}/{task-id}
           # task def has awslogs-stream-prefix=migrate, container-name=migrate → migrate/migrate/{task-id}
           # Log group is AppLogGroup = /ecs/gopng-platform (both app and migrate tasks share it)
@@ -121,7 +130,7 @@ jobs:
             --log-group-name /ecs/gopng-platform \
             --log-stream-name "migrate/migrate/${TASK_ID}" \
             --output text 2>&1 \
-          || echo "(CloudWatch access denied — check /ecs/gopng-platform → migrate/migrate/${TASK_ID} in AWS console, or add logs:FilterLogEvents to gopng-platform-deploy role)"
+          || echo "(stream migrate/migrate/${TASK_ID} not found in /ecs/gopng-platform — see recent streams above)"
           echo "=== End migration logs ==="
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
