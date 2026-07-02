@@ -93,14 +93,16 @@ export default buildConfig({
     : {}),
   sharp,
   plugins: [
-    s3Storage({
-      collections: {
-        media: true,
-      },
-      bucket: process.env.S3_MEDIA_BUCKET || '',
-      config: {
-        region: process.env.AWS_REGION || 'ap-southeast-2',
-      },
-    }),
+    // Only mount S3 storage when a bucket is configured — avoids init
+    // failures in migration/build environments where S3_MEDIA_BUCKET is absent.
+    ...(process.env.S3_MEDIA_BUCKET
+      ? [
+          s3Storage({
+            collections: { media: true },
+            bucket: process.env.S3_MEDIA_BUCKET,
+            config: { region: process.env.AWS_REGION || 'ap-southeast-2' },
+          }),
+        ]
+      : []),
   ],
 })
