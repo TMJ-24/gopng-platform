@@ -1,39 +1,39 @@
-// One-off script: find the first admin user and reset their password.
-// Run via ECS task: node scripts/reset-admin.mjs
+// One-off script: create a fresh recovery admin account.
+// Avoids payload.update() to sidestep the lock-check that fails when
+// payload_locked_documents_rels is missing a column from a pending migration.
+// Run via ECS task: node node_modules/.bin/tsx scripts/reset-admin.mjs
 import { getPayload } from 'payload'
 import config from '../src/payload.config.js'
 
 const NEW_PASSWORD = 'GoPNG_Admin_2026!'
-const FALLBACK_EMAIL = 'admin@digital.gov.pg'
+const RECOVERY_EMAIL = 'recovery.admin@digital.gov.pg'
 
 async function main() {
   const payload = await getPayload({ config })
 
-  const { docs, totalDocs } = await payload.find({ collection: 'users', limit: 5, depth: 0 })
-  console.log(`Users in DB: ${totalDocs}`)
+  const { docs: existing } = await payload.find({
+    collection: 'users',
+    where: { email: { equals: RECOVERY_EMAIL } },
+    limit: 1,
+    depth: 0,
+  })
 
-  if (totalDocs === 0) {
+  if (existing.length > 0) {
+    console.log(`Recovery account already exists: ${RECOVERY_EMAIL}`)
+    console.log('Delete it first if you need to reset the password.')
+  } else {
     const user = await payload.create({
       collection: 'users',
       data: {
-        email: FALLBACK_EMAIL,
+        email: RECOVERY_EMAIL,
         password: NEW_PASSWORD,
         role: 'admin',
-        firstName: 'Platform',
+        firstName: 'Recovery',
         lastName: 'Admin',
       },
     })
-    console.log(`Created admin: ${user.email}`)
+    console.log(`Created recovery admin: ${user.email}`)
     console.log(`Password: ${NEW_PASSWORD}`)
-  } else {
-    const target = docs[0]
-    await payload.update({
-      collection: 'users',
-      id: target.id,
-      data: { password: NEW_PASSWORD },
-    })
-    console.log(`Reset password for: ${target.email}`)
-    console.log(`New password: ${NEW_PASSWORD}`)
   }
 
   process.exit(0)
