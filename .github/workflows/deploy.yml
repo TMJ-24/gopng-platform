@@ -80,6 +80,11 @@ jobs:
           echo "=== Task definition diagnostics (names only, no secret values) ==="
           jq '{containers: [.containerDefinitions[] | {name: .name, command: .command, env_var_names: [.environment[]?.name], log_config: .logConfiguration}]}' /tmp/migrate-task-def.json
           echo "=== End diagnostics ==="
+          # Patch awslogs-create-group so the log group is auto-created if it
+          # doesn't exist — prevents silent log loss when the group is missing.
+          jq '.containerDefinitions[0].logConfiguration.options["awslogs-create-group"] = "true"' \
+            /tmp/migrate-task-def.json > /tmp/migrate-task-def-patched.json \
+            && mv /tmp/migrate-task-def-patched.json /tmp/migrate-task-def.json
           # Capture the actual container name so the override matches exactly
           CONTAINER_NAME=$(jq -r '.containerDefinitions[0].name' /tmp/migrate-task-def.json)
           echo "container-name=$CONTAINER_NAME" >> $GITHUB_OUTPUT
@@ -109,15 +114,22 @@ jobs:
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
             --query "tasks[0].{taskStopCode:stopCode,taskStoppedReason:stoppedReason,container:containers[0].{exitCode:exitCode,reason:reason,stopCode:stopCode}}" \
             --output json
-          echo "=== Recent log streams with migrate prefix ==="
+          # List the 20 most-recently-written streams to find where logs actually land
+          echo "=== Recent log streams in /ecs/gopng-platform ==="
           aws logs describe-log-streams \
             --log-group-name /ecs/gopng-platform \
-            --log-stream-name-prefix migrate \
             --order-by LastEventTime \
             --descending \
-            --limit 10 \
+            --limit 20 \
             --query 'logStreams[*].logStreamName' \
             --output text 2>&1 || echo "(describe-log-streams failed)"
+          # Also search by migrate prefix (no ordering — avoids InvalidParameterException)
+          echo "=== Streams with migrate/ prefix ==="
+          aws logs describe-log-streams \
+            --log-group-name /ecs/gopng-platform \
+            --log-stream-name-prefix "migrate" \
+            --query 'logStreams[*].logStreamName' \
+            --output text 2>&1 || true
           # Stream format: {awslogs-stream-prefix}/{container-name}/{task-id}
           # task def has awslogs-stream-prefix=migrate, container-name=migrate → migrate/migrate/{task-id}
           # Log group is AppLogGroup = /ecs/gopng-platform (both app and migrate tasks share it)
@@ -130,7 +142,7 @@ jobs:
             --log-group-name /ecs/gopng-platform \
             --log-stream-name "migrate/migrate/${TASK_ID}" \
             --output text 2>&1 \
-          || echo "(stream migrate/migrate/${TASK_ID} not found in /ecs/gopng-platform — see recent streams above)"
+          || echo "(stream migrate/migrate/${TASK_ID} not found — check stream list above for actual location)"
           echo "=== End migration logs ==="
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \

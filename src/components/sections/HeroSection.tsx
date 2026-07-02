@@ -12,10 +12,10 @@ export function HeroSection() {
   const heroSrc = mediaUrl(site.heroImage?.url)
 
   return (
-    <section style={{ display: 'flex', minHeight: 420, overflow: 'hidden' }}>
+    <section className="hero-section" style={{ display: 'flex', minHeight: 420, overflow: 'hidden' }}>
 
       {/* ── Left panel — solid brand colour ─────────── */}
-      <div style={{
+      <div className="hero-panel-left" style={{
         flex: '0 0 50%',
         background: 'var(--color-primary, #CC0000)',
         display: 'flex',
@@ -40,7 +40,7 @@ export function HeroSection() {
           </h1>
           <p style={{
             fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-            fontSize: '1.25rem',
+            fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
             fontWeight: 400,
             color: 'rgba(255,255,255,0.85)',
             lineHeight: 1.6,
@@ -69,7 +69,7 @@ export function HeroSection() {
       </div>
 
       {/* ── Right panel — hero photo ─────────────────── */}
-      <div style={{ flex: '0 0 50%', position: 'relative', minHeight: 320 }}>
+      <div className="hero-panel-right" style={{ flex: '0 0 50%', position: 'relative', minHeight: 320 }}>
         {heroSrc ? (
           <>
             <img
@@ -89,7 +89,6 @@ export function HeroSection() {
             position: 'absolute', inset: 0,
             background: 'linear-gradient(135deg, var(--color-secondary, #1a3a6b) 0%, #0d2040 100%)',
           }}>
-            {/* Subtle grid pattern */}
             <div style={{
               position: 'absolute', inset: 0,
               backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)',
@@ -99,12 +98,27 @@ export function HeroSection() {
         )}
       </div>
 
-      {/* ── Responsive stacking ──────────────────────── */}
       <style>{`
         @media (max-width: 720px) {
-          section[data-hero] { flex-direction: column; }
-          section[data-hero] > div:first-child  { flex: none; width: 100%; }
-          section[data-hero] > div:last-child   { flex: none; width: 100%; min-height: 200px; }
+          .hero-section {
+            flex-direction: column !important;
+            min-height: auto !important;
+          }
+          .hero-panel-left {
+            flex: none !important;
+            width: 100% !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            padding-top: 40px !important;
+            padding-bottom: 40px !important;
+            min-height: auto !important;
+          }
+          .hero-panel-right {
+            flex: none !important;
+            width: 100% !important;
+            min-height: 220px !important;
+            position: relative !important;
+          }
         }
       `}</style>
     </section>

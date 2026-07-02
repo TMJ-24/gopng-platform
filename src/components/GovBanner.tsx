@@ -10,10 +10,9 @@ export function GovBanner() {
     <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e0e0e0', fontSize: 12 }}>
 
       {/* ── Masthead bar ─────────────────────────────── */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '6px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '6px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px 12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* PNG bird of paradise emblem placeholder */}
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
             <circle cx="10" cy="10" r="9" fill="#CC0000" stroke="#CC0000" strokeWidth="0.5" />
             <circle cx="10" cy="10" r="9" fill="none" stroke="#FFD700" strokeWidth="1" />
             <path d="M10 4c0 0-2 3-2 6s2 6 2 6 2-3 2-6-2-6-2-6z" fill="#FFD700" />
@@ -46,9 +45,8 @@ export function GovBanner() {
         <div style={{ background: '#f0f4f8', borderTop: '1px solid #dde3ea' }}>
           <div style={{
             maxWidth: 1280, margin: '0 auto', padding: '18px 24px',
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20,
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20,
           }}>
-
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid #aab4be', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <GlobeIcon size={16} style={{ color: '#555' }} />
@@ -60,7 +58,6 @@ export function GovBanner() {
                 </p>
               </div>
             </div>
-
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', border: '1px solid #2d7a2d', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <LockIcon size={16} style={{ color: '#2d7a2d' }} />
@@ -72,7 +69,6 @@ export function GovBanner() {
                 </p>
               </div>
             </div>
-
           </div>
         </div>
       )}

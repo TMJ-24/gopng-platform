@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { LangSwitcher } from './LangSwitcher'
 import { GovBanner } from './GovBanner'
@@ -19,6 +20,7 @@ const DEFAULT_NAV = [
 
 export function SiteNav({ site, locale }: { site: Site; locale: string }) {
   const navLinks = site.navigation?.length ? site.navigation : DEFAULT_NAV
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <header style={{ position: 'sticky', top: 0, zIndex: 50 }}>
@@ -26,10 +28,10 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
 
       {/* ── White nav bar ───────────────────────────── */}
       <div style={{ background: '#ffffff', borderBottom: '1px solid #e0e0e0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', gap: 0 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center' }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0, marginRight: 32 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0, marginRight: 'auto' }}>
             {site.logo?.url ? (
               <img
                 src={mediaUrl(site.logo.url)}
@@ -44,13 +46,13 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
             <div>
               <div style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
               {site.domain && (
-                <div style={{ fontSize: 10, color: '#888888' }}>{site.domain}</div>
+                <div className="site-nav-domain" style={{ fontSize: 10, color: '#888888' }}>{site.domain}</div>
               )}
             </div>
           </Link>
 
-          {/* Nav links — centred in remaining space */}
-          <nav style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Nav links — desktop only, centred between logo and utilities */}
+          <nav className="site-nav-desktop" aria-label="Main navigation">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -70,7 +72,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
           </nav>
 
           {/* Right utilities */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 16 }}>
             <Link
               href="/search"
               aria-label="Search"
@@ -80,11 +82,61 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
               <SearchIcon size={18} />
             </Link>
             <LangSwitcher currentLocale={locale} />
+
+            {/* Hamburger button — mobile only */}
+            <button
+              className="site-nav-hamburger"
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              style={{ padding: 8, background: 'none', border: 'none', cursor: 'pointer', color: '#333333', borderRadius: 4, display: 'none' }}
+            >
+              {menuOpen ? (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                  <path d="M4 4l14 14M18 4L4 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                  <path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile nav drawer — shown when hamburger is open */}
+        {menuOpen && (
+          <nav className="site-nav-mobile-drawer" aria-label="Mobile navigation">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                target={(link as any).openInNewTab ? '_blank' : undefined}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  display: 'block',
+                  fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                  fontSize: '1rem', fontWeight: 500, color: '#333333',
+                  padding: '14px 24px',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid #f0f0f0',
+                }}
+                className="site-nav-mobile-link"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        )}
       </div>
 
       <style>{`
+        .site-nav-desktop {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
         .site-nav-link { position: relative; }
         .site-nav-link::after {
           content: '';
@@ -98,6 +150,14 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
         .site-nav-link:hover { color: var(--color-primary, #CC0000) !important; }
         .site-nav-link:hover::after { transform: scaleX(1); }
         .site-nav-icon:hover { color: #111111 !important; background: #f5f5f5; }
+        .site-nav-mobile-link:hover { color: var(--color-primary, #CC0000) !important; background: #fafafa; }
+        @media (max-width: 768px) {
+          .site-nav-desktop { display: none !important; }
+          .site-nav-hamburger { display: flex !important; }
+        }
+        @media (max-width: 480px) {
+          .site-nav-domain { display: none; }
+        }
       `}</style>
     </header>
   )
