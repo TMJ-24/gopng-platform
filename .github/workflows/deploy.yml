@@ -131,18 +131,20 @@ jobs:
             --query 'logStreams[*].logStreamName' \
             --output text 2>&1 || true
           # Stream format: {awslogs-stream-prefix}/{container-name}/{task-id}
-          # task def has awslogs-stream-prefix=migrate, container-name=migrate → migrate/migrate/{task-id}
-          # Log group is AppLogGroup = /ecs/gopng-platform (both app and migrate tasks share it)
+          # Live task def has awslogs-stream-prefix=migrate-sql, container-name=migrate
+          # → migrate-sql/migrate/{task-id}
           echo "=== Migration container logs ==="
           aws logs filter-log-events \
             --log-group-name /ecs/gopng-platform \
-            --log-stream-names "migrate/migrate/${TASK_ID}" \
+            --log-stream-names "migrate-sql/migrate/${TASK_ID}" \
+            --query 'events[*].message' \
             --output text 2>&1 \
           || aws logs get-log-events \
             --log-group-name /ecs/gopng-platform \
-            --log-stream-name "migrate/migrate/${TASK_ID}" \
+            --log-stream-name "migrate-sql/migrate/${TASK_ID}" \
+            --query 'events[*].message' \
             --output text 2>&1 \
-          || echo "(stream migrate/migrate/${TASK_ID} not found — check stream list above for actual location)"
+          || echo "(stream migrate-sql/migrate/${TASK_ID} not found)"
           echo "=== End migration logs ==="
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster $ECS_CLUSTER --tasks $TASK_ARN \
