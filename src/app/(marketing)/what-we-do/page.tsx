@@ -33,19 +33,19 @@ export default function WhatWeDoPage() {
       <section style={{ padding: '72px 24px', background: '#FFFFFF' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 44 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
+            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
               How It Works
             </p>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: 'clamp(24px, 3vw, 30px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
               Four steps, no developer required
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 20 }}>
             {STEPS.map(s => (
               <div key={s.step} style={{ padding: 22, border: `1px solid ${C.border}`, borderRadius: 10 }}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: C.goldDark, letterSpacing: '0.05em', marginBottom: 10 }}>{s.step}</div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{s.title}</h3>
-                <p style={{ fontSize: 13, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{s.body}</p>
+                <div style={{ fontSize: 14, fontWeight: 800, color: C.goldDark, letterSpacing: '0.05em', marginBottom: 10 }}>{s.step}</div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{s.title}</h3>
+                <p style={{ fontSize: 14, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{s.body}</p>
               </div>
             ))}
           </div>
@@ -57,13 +57,13 @@ export default function WhatWeDoPage() {
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center', marginBottom: 56 }}>
           <ImagePlaceholder label="Content editor screenshot" minHeight={280} />
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
+            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
               Built For DTOs
             </p>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: C.text, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: 'clamp(24px, 3vw, 30px)', fontWeight: 800, color: C.text, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
               Manage your site without writing code
             </h2>
-            <p style={{ fontSize: 15, color: C.textSub, lineHeight: 1.7, margin: 0 }}>
+            <p style={{ fontSize: 16, color: C.textSub, lineHeight: 1.7, margin: 0 }}>
               Every agency site ships with the same standard page builder — hero
               sections, galleries, statistics, document downloads, contact forms and
               more — so updating content is as simple as filling in a form.
@@ -74,8 +74,8 @@ export default function WhatWeDoPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 20 }}>
           {FEATURES.map(f => (
             <div key={f.title} style={{ background: '#FFFFFF', padding: 22, borderRadius: 10, border: `1px solid ${C.border}` }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{f.title}</h3>
-              <p style={{ fontSize: 13, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{f.body}</p>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{f.title}</h3>
+              <p style={{ fontSize: 14, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{f.body}</p>
             </div>
           ))}
         </div>

@@ -20,8 +20,8 @@ export function StatsSection({ organizationCount }: { organizationCount: number 
       <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 24, textAlign: 'center' }}>
         {stats.map(s => (
           <div key={s.label}>
-            <div style={{ fontSize: 40, fontWeight: 800, color: C.red, letterSpacing: '-0.02em', lineHeight: 1 }}>{s.value}</div>
-            <div style={{ fontSize: 13, color: C.textSub, marginTop: 10 }}>{s.label}</div>
+            <div style={{ fontSize: 44, fontWeight: 800, color: C.red, letterSpacing: '-0.02em', lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontSize: 14, color: C.textSub, marginTop: 10 }}>{s.label}</div>
           </div>
         ))}
       </div>

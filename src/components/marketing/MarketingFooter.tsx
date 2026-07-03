@@ -42,9 +42,9 @@ export function MarketingFooter() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <img src="/cresent.png" alt="Government of Papua New Guinea" style={{ width: 28, height: 28, objectFit: 'contain' }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#FFFFFF' }}>GoPNG Website Platform</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF' }}>GoPNG Website Platform</span>
             </div>
-            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 220 }}>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, maxWidth: 220 }}>
               The digital platform Government of Papua New Guinea agencies use to launch
               and manage their official websites.
             </p>
@@ -52,12 +52,12 @@ export function MarketingFooter() {
 
           {COLUMNS.map(col => (
             <div key={col.title}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 14 }}>
                 {col.title}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {col.links.map(l => (
-                  <Link key={l.label} href={l.href} style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>
+                  <Link key={l.label} href={l.href} style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>
                     {l.label}
                   </Link>
                 ))}
@@ -67,12 +67,12 @@ export function MarketingFooter() {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
             © {new Date().getFullYear()} Government of Papua New Guinea. GoPNG Digital Platform.
           </span>
           <div style={{ display: 'flex', gap: 14 }}>
             {SOCIAL.map(s => (
-              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', textDecoration: 'none' }}>
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', textDecoration: 'none' }}>
                 {s.label}
               </a>
             ))}

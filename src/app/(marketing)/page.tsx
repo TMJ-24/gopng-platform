@@ -61,18 +61,18 @@ export default async function HomePage() {
       <section style={{ padding: '72px 24px', background: '#FFFFFF' }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 44 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
+            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
               Why This Platform Exists
             </p>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
               A shared, standard way to bring government online
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
             {PILLARS.map(p => (
               <div key={p.title} style={{ padding: 24, border: `1px solid ${C.border}`, borderRadius: 10 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '0 0 10px' }}>{p.title}</h3>
-                <p style={{ fontSize: 14, color: C.textSub, lineHeight: 1.65, margin: 0 }}>{p.body}</p>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: C.text, margin: '0 0 10px' }}>{p.title}</h3>
+                <p style={{ fontSize: 15, color: C.textSub, lineHeight: 1.65, margin: 0 }}>{p.body}</p>
               </div>
             ))}
           </div>
@@ -84,18 +84,18 @@ export default async function HomePage() {
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
           <ImagePlaceholder label="Platform screenshot" minHeight={280} />
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
+            <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
               What We Do
             </p>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: C.text, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: 'clamp(24px, 3vw, 30px)', fontWeight: 800, color: C.text, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
               From a login to a live government website
             </h2>
-            <p style={{ fontSize: 15, color: C.textSub, lineHeight: 1.7, margin: '0 0 20px' }}>
+            <p style={{ fontSize: 16, color: C.textSub, lineHeight: 1.7, margin: '0 0 20px' }}>
               Digital Transformation Officers provision a site, customise its content
               through a visual editor, and publish — no procurement, no separate hosting
               contract, no waiting on a developer.
             </p>
-            <Link href="/what-we-do" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 700, color: C.red, textDecoration: 'none' }}>
+            <Link href="/what-we-do" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 15, fontWeight: 700, color: C.red, textDecoration: 'none' }}>
               See how it works <ArrowIcon />
             </Link>
           </div>

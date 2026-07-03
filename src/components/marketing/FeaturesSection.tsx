@@ -14,18 +14,18 @@ export function FeaturesSection() {
     <section style={{ padding: '72px 24px', background: '#FFFFFF' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
+          <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
             Features
           </p>
-          <h2 style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontSize: 'clamp(24px, 3vw, 32px)', fontWeight: 800, color: C.text, margin: 0, letterSpacing: '-0.01em' }}>
             Everything an agency needs to go online
           </h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 20 }}>
           {FEATURES.map(f => (
             <div key={f.title} style={{ padding: 22, border: `1px solid ${C.border}`, borderRadius: 10 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{f.title}</h3>
-              <p style={{ fontSize: 13, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{f.body}</p>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: '0 0 8px' }}>{f.title}</h3>
+              <p style={{ fontSize: 14, color: C.textSub, lineHeight: 1.6, margin: 0 }}>{f.body}</p>
             </div>
           ))}
         </div>

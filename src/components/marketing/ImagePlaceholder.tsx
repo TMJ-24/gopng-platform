@@ -31,7 +31,7 @@ export function ImagePlaceholder({ label = 'Image placeholder', aspectRatio = '1
         <circle cx="8.5" cy="8.5" r="1.5" />
         <path d="M21 15l-5-5L5 21" />
       </svg>
-      <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.02em' }}>{label}</span>
     </div>
   )
 }

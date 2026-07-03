@@ -14,24 +14,54 @@ type Props = {
 
 // Interior pages (About Us, What We Do) use the pale hero background already
 // established and approved earlier this session (#F4E9F6, previously applied
-// consistently across PageBanner/HeroSection/HeroBlock) — Home keeps the bolder
-// red/gold banner treatment as the primary landing surface.
+// consistently across PageBanner/HeroSection/HeroBlock). Home uses the same flat,
+// faded treatment but in a soft orange tone, for a warmer landing surface — both
+// are light backgrounds, so both use the same dark text scheme.
 const PALE_BG = '#F4E9F6'
+const FADED_RED_BG = '#F6DEDB'
 
 export function Hero({ eyebrow, title, description, ctas, compact }: Props) {
-  const pale = compact
+  const bg = compact ? PALE_BG : FADED_RED_BG
+  const accent = C.redDark
 
-  return (
-    <section
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        background: pale ? PALE_BG : `linear-gradient(135deg, ${C.red} 0%, ${C.redDark} 60%, ${C.black} 130%)`,
-      }}
-    >
-      {/* No real photography exists yet — the national crest stands in as a large,
-          faded background image rather than a flat colour band. */}
-      {!pale && (
+  const textBlock = (
+    <div style={{ textAlign: 'left' }}>
+      <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: accent, margin: '0 0 16px' }}>
+        {eyebrow}
+      </p>
+      <h1 style={{ fontSize: compact ? 'clamp(28px, 4.5vw, 40px)' : 'clamp(32px, 5vw, 48px)', fontWeight: 800, color: C.text, margin: '0 0 20px', letterSpacing: '-0.01em', lineHeight: 1.15 }}>
+        {title}
+      </h1>
+      <p style={{ fontSize: 18, color: C.textSub, lineHeight: 1.7, margin: '0', maxWidth: compact ? 640 : 520 }}>
+        {description}
+      </p>
+      {ctas && ctas.length > 0 && (
+        <div style={{ marginTop: 36, display: 'flex', gap: 12, justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+          {ctas.map(cta => (
+            <Link
+              key={cta.href}
+              href={cta.href}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '13px 30px', borderRadius: 6, fontSize: 16, fontWeight: 700,
+                textDecoration: 'none',
+                background: cta.primary ? C.red : 'transparent',
+                color: cta.primary ? '#FFFFFF' : C.text,
+                border: cta.primary ? 'none' : '1px solid rgba(0,0,0,0.25)',
+              }}
+            >
+              {cta.label}
+              {cta.primary && <ArrowIcon color="#FFFFFF" />}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+
+  if (compact) {
+    return (
+      <section style={{ position: 'relative', overflow: 'hidden', background: bg }}>
         <img
           src="/cresent.png"
           alt=""
@@ -43,38 +73,33 @@ export function Hero({ eyebrow, title, description, ctas, compact }: Props) {
             opacity: 0.1, pointerEvents: 'none',
           }}
         />
-      )}
-      <div style={{ position: 'relative', maxWidth: 860, margin: '0 auto', padding: compact ? '56px 24px 48px' : '76px 24px 64px', textAlign: 'center' }}>
-        <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: pale ? C.redDark : C.gold, margin: '0 0 14px' }}>
-          {eyebrow}
-        </p>
-        <h1 style={{ fontSize: compact ? 'clamp(26px, 4vw, 36px)' : 'clamp(28px, 4.5vw, 42px)', fontWeight: 800, color: pale ? C.text : '#FFFFFF', margin: '0 0 18px', letterSpacing: '-0.01em', lineHeight: 1.15 }}>
-          {title}
-        </h1>
-        <p style={{ fontSize: 16, color: pale ? C.textSub : 'rgba(255,255,255,0.85)', lineHeight: 1.7, margin: '0 auto', maxWidth: 620 }}>
-          {description}
-        </p>
-        {ctas && ctas.length > 0 && (
-          <div style={{ marginTop: 32, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {ctas.map(cta => (
-              <Link
-                key={cta.href}
-                href={cta.href}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '12px 28px', borderRadius: 6, fontSize: 15, fontWeight: 700,
-                  textDecoration: 'none',
-                  background: cta.primary ? (pale ? C.red : C.gold) : 'transparent',
-                  color: cta.primary ? (pale ? '#FFFFFF' : '#1A1200') : (pale ? C.text : '#FFFFFF'),
-                  border: cta.primary ? 'none' : `1px solid ${pale ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.4)'}`,
-                }}
-              >
-                {cta.label}
-                {cta.primary && <ArrowIcon color={pale ? '#FFFFFF' : '#1A1200'} />}
-              </Link>
-            ))}
-          </div>
-        )}
+        <div style={{ position: 'relative', maxWidth: 1120, margin: '0 auto', padding: '64px 24px 56px' }}>
+          {textBlock}
+        </div>
+      </section>
+    )
+  }
+
+  // Home hero is split into two halves: copy + CTAs on the left, a real photo
+  // of Parliament House, Port Moresby on the right (Brian Ireland, CC BY-SA 2.0,
+  // via Wikimedia Commons), in place of the crest watermark used elsewhere.
+  return (
+    <section style={{ position: 'relative', overflow: 'hidden', background: bg }}>
+      <div
+        style={{
+          position: 'relative', maxWidth: 1120, margin: '0 auto', padding: '100px 24px',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: 48, alignItems: 'center',
+        }}
+      >
+        {textBlock}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <img
+            src="/hero-parliament.jpg"
+            alt="Parliament House, Port Moresby"
+            style={{ width: '100%', maxWidth: 480, objectFit: 'cover', borderRadius: 12, boxShadow: '0 20px 50px rgba(0,0,0,0.18)' }}
+          />
+        </div>
       </div>
     </section>
   )
