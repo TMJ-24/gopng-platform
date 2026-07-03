@@ -38,11 +38,14 @@ export const Templates: CollectionConfig = {
     {
       name: 'category', type: 'select', required: true,
       options: [
-        { label: 'National Portal',        value: 'portal' },
-        { label: 'Ministry Website',       value: 'ministry' },
-        { label: 'Department Website',     value: 'department' },
-        { label: 'Provincial Government',  value: 'provincial' },
-        { label: 'Statutory Authority',    value: 'authority' },
+        { label: 'National Portal',              value: 'portal' },
+        { label: 'Ministry Website',              value: 'ministry' },
+        { label: 'Department Website',            value: 'department' },
+        { label: 'Provincial Government',         value: 'provincial' },
+        { label: 'Statutory Authority',           value: 'authority' },
+        { label: 'Commission',                    value: 'commission' },
+        { label: 'Statutory Body',                value: 'statutory-body' },
+        { label: 'State-Owned Enterprise',        value: 'soe' },
       ],
     },
     {

@@ -6,6 +6,7 @@ import { useParams, useSearchParams, notFound } from 'next/navigation'
 import { useSite } from '@/context/SiteContext'
 import { RichText } from '@/components/RichText'
 import { PageBanner } from '@/components/PageBanner'
+import { BlockRenderer } from '@/components/blocks/BlockRenderer'
 
 const QUICK_LINKS = [
   { label: 'Home',         href: '/' },
@@ -60,6 +61,8 @@ export default function CmsPage() {
                   <div key={i} style={{ height: 14, background: '#F2F3F3', borderRadius: 4, width: `${w}%` }} />
                 ))}
               </div>
+            ) : page?.layout?.length ? (
+              <BlockRenderer blocks={page.layout} />
             ) : (
               <RichText content={page?.content} />
             )}

@@ -249,7 +249,7 @@ export interface Template {
   slug: string;
   description?: string | null;
   thumbnail?: (number | null) | Media;
-  category: 'portal' | 'ministry' | 'department' | 'provincial' | 'authority';
+  category: 'portal' | 'ministry' | 'department' | 'provincial' | 'authority' | 'commission' | 'statutory-body' | 'soe';
   defaultTheme?: ('default' | 'blue' | 'green' | 'red') | null;
   /**
    * Homepage sections — drag to reorder, toggle to enable/disable, × to remove.
@@ -281,6 +281,117 @@ export interface Page {
    */
   slug: string;
   site: number | Site;
+  /**
+   * Compose the page from reusable sections — drag to reorder.
+   */
+  layout?:
+    | (
+        | {
+            heading: string;
+            subheading?: string | null;
+            image?: (number | null) | Media;
+            ctaLabel?: string | null;
+            /**
+             * e.g. /contact or https://...
+             */
+            ctaHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            heading?: string | null;
+            images?:
+              | {
+                  image: number | Media;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            heading?: string | null;
+            stats?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'statistics';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  label: string;
+                  file: number | Media;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'downloads';
+          }
+        | {
+            heading?: string | null;
+            links?:
+              | {
+                  label: string;
+                  href: string;
+                  openInNewTab?: boolean | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quick-links';
+          }
+        | {
+            heading?: string | null;
+            intro?: string | null;
+            mode?: ('form' | 'info' | 'both') | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contact';
+          }
+        | {
+            heading?: string | null;
+            count?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'latest-news';
+          }
+      )[]
+    | null;
+  /**
+   * Legacy content field — only rendered on the frontend when Layout above is empty. Prefer Layout blocks for new pages.
+   */
   content?: {
     root: {
       type: string;
@@ -582,6 +693,102 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   site?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              image?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              heading?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        statistics?:
+          | T
+          | {
+              heading?: T;
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        downloads?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    file?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        'quick-links'?:
+          | T
+          | {
+              heading?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    href?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        contact?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
+              mode?: T;
+              id?: T;
+              blockName?: T;
+            };
+        'latest-news'?:
+          | T
+          | {
+              heading?: T;
+              count?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   content?: T;
   status?: T;
   publishedDate?: T;

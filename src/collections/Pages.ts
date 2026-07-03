@@ -2,6 +2,14 @@ import type { CollectionConfig } from 'payload'
 import { adminOnly, contentAccess, publicRead } from '@/access'
 import { revalidateAfterChange, siteTag } from '@/hooks/revalidate'
 import { triggerSiteDeploy } from '@/hooks/triggerSiteDeploy'
+import { Hero } from '@/blocks/Hero'
+import { Content } from '@/blocks/Content'
+import { Gallery } from '@/blocks/Gallery'
+import { Statistics } from '@/blocks/Statistics'
+import { Downloads } from '@/blocks/Downloads'
+import { QuickLinks } from '@/blocks/QuickLinks'
+import { Contact } from '@/blocks/Contact'
+import { LatestNews } from '@/blocks/LatestNews'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -44,7 +52,20 @@ export const Pages: CollectionConfig = {
       },
     },
     { name: 'site', type: 'relationship', relationTo: 'sites', required: true, index: true },
-    { name: 'content', type: 'richText', localized: true },
+    {
+      name: 'layout',
+      type: 'blocks',
+      admin: { description: 'Compose the page from reusable sections — drag to reorder.' },
+      blocks: [Hero, Content, Gallery, Statistics, Downloads, QuickLinks, Contact, LatestNews],
+    },
+    {
+      name: 'content',
+      type: 'richText',
+      localized: true,
+      admin: {
+        description: 'Legacy content field — only rendered on the frontend when Layout above is empty. Prefer Layout blocks for new pages.',
+      },
+    },
     {
       name: 'status',
       type: 'select',

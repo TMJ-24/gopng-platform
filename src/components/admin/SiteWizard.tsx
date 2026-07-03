@@ -66,6 +66,7 @@ const AGENCY_TYPES = [
   { label: 'Department',             value: 'department' },
   { label: 'Statutory Authority',    value: 'authority' },
   { label: 'Commission',             value: 'commission' },
+  { label: 'Statutory Body',         value: 'statutory-body' },
   { label: 'Provincial Government',  value: 'provincial' },
   { label: 'State-Owned Enterprise', value: 'soe' },
 ]
@@ -78,11 +79,14 @@ const THEMES = [
 ]
 
 const CATEGORY_LABELS: Record<string, string> = {
-  portal:     'National Portal',
-  ministry:   'Ministry Website',
-  department: 'Department Website',
-  provincial: 'Provincial Government',
-  authority:  'Statutory Authority',
+  portal:          'National Portal',
+  ministry:        'Ministry Website',
+  department:      'Department Website',
+  provincial:      'Provincial Government',
+  authority:       'Statutory Authority',
+  commission:      'Commission Website',
+  'statutory-body': 'Statutory Body Website',
+  soe:             'State-Owned Enterprise Website',
 }
 
 const STEPS: WizardStep[] = ['template', 'sections', 'details', 'admin', 'review']
