@@ -7,6 +7,7 @@ import { StatsSection }     from '@/components/sections/StatsSection'
 import { NewsSection }      from '@/components/sections/NewsSection'
 import { DirectorySection } from '@/components/sections/DirectorySection'
 import { OpenDataSection }  from '@/components/sections/OpenDataSection'
+import { AboutSection }     from '@/components/sections/AboutSection'
 import { CTASection }       from '@/components/sections/CTASection'
 
 type SectionType = 'hero' | 'services' | 'stats' | 'news' | 'directory' | 'opendata' | 'about' | 'cta'
@@ -18,7 +19,7 @@ const SECTION_REGISTRY: Record<SectionType, React.ComponentType> = {
   news:      NewsSection,
   directory: DirectorySection,
   opendata:  OpenDataSection,
-  about:     DirectorySection, // fallback — add AboutSection when ministry template needs it
+  about:     AboutSection,
   cta:       CTASection,
 }
 
