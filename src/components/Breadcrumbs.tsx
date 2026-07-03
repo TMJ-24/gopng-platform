@@ -1,43 +1,35 @@
+'use client'
+
 import Link from 'next/link'
+import MuiBreadcrumbs from '@mui/material/Breadcrumbs'
+import Typography from '@mui/material/Typography'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 
 type Crumb = { label: string; href?: string }
 
-const FONT = '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
-
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
   return (
-    <nav aria-label="Breadcrumb">
-      <ol style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0 6px', listStyle: 'none', margin: 0, padding: 0 }}>
-        {items.map((item, i) => (
-          <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {i > 0 && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ flexShrink: 0, color: '#aaa' }}>
-                <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-            {item.href ? (
-              <Link
-                href={item.href}
-                style={{
-                  fontFamily: FONT,
-                  fontSize: '0.875rem',
-                  color: '#4a6fa5',
-                  textDecoration: 'none',
-                  fontWeight: 400,
-                }}
-                className="breadcrumb-link"
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span style={{ fontFamily: FONT, fontSize: '0.875rem', color: '#555', fontWeight: 500 }}>
-                {item.label}
-              </span>
-            )}
-          </li>
-        ))}
-      </ol>
-      <style>{`.breadcrumb-link:hover { text-decoration: underline; }`}</style>
-    </nav>
+    <MuiBreadcrumbs
+      aria-label="Breadcrumb"
+      separator={<NavigateNextIcon sx={{ fontSize: 14, color: '#aaa' }} />}
+      sx={{ fontSize: '0.875rem' }}
+    >
+      {items.map((item, i) =>
+        item.href ? (
+          <Typography
+            key={i}
+            component={Link}
+            href={item.href}
+            sx={{ fontSize: '0.875rem', color: '#4a6fa5', textDecoration: 'none', fontWeight: 400, '&:hover': { textDecoration: 'underline' } }}
+          >
+            {item.label}
+          </Typography>
+        ) : (
+          <Typography key={i} sx={{ fontSize: '0.875rem', color: '#555', fontWeight: 500 }}>
+            {item.label}
+          </Typography>
+        ),
+      )}
+    </MuiBreadcrumbs>
   )
 }

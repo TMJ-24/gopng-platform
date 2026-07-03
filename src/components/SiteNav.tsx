@@ -2,9 +2,26 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Box from '@mui/material/Box'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Drawer from '@mui/material/Drawer'
+import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
+import Paper from '@mui/material/Paper'
+import Fade from '@mui/material/Fade'
+import Avatar from '@mui/material/Avatar'
+import MenuIcon from '@mui/icons-material/Menu'
+import CloseIcon from '@mui/icons-material/Close'
+import SearchIcon from '@mui/icons-material/Search'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { LangSwitcher } from './LangSwitcher'
 import { GovBanner } from './GovBanner'
-import { SearchIcon, ChevronDownIcon, CloseIcon } from './Icons'
 import { mediaUrl } from '@/lib/media'
 import type { Site } from '@/lib/tenant'
 
@@ -17,6 +34,8 @@ const DEFAULT_NAV = [
   { label: 'Publications', href: '/publications' },
   { label: 'Contact',      href: '/contact' },
 ]
+
+type NavChild = { label: string; href: string; description?: string; openInNewTab?: boolean }
 
 export function SiteNav({ site, locale }: { site: Site; locale: string }) {
   const navLinks = site.navigation?.length ? site.navigation : DEFAULT_NAV
@@ -40,257 +59,217 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
   }, [openDropdown])
 
   const activeItem = navLinks.find((l) => l.href === openDropdown && (l as any).children?.length)
+  const activeChildren = (activeItem as any)?.children as NavChild[] | undefined
 
   return (
-    <header style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+    <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 50 }}>
       <GovBanner />
 
       {/* ── White nav bar ───────────────────────────── */}
-      <div ref={navRef} style={{ background: '#ffffff', borderBottom: '1px solid #e0e0e0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', position: 'relative' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center' }}>
+      <AppBar
+        ref={navRef}
+        position="static"
+        color="inherit"
+        elevation={0}
+        sx={{ background: '#ffffff', borderBottom: '1px solid #e0e0e0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', position: 'relative' }}
+      >
+        <Toolbar disableGutters sx={{ maxWidth: 1280, width: '100%', mx: 'auto', px: 3, height: 64, minHeight: 64 }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0, marginRight: 'auto' }}>
+          <Stack
+            component={Link}
+            href="/"
+            direction="row"
+            spacing={1.25}
+            sx={{ alignItems: 'center', textDecoration: 'none', flexShrink: 0, mr: 'auto' }}
+          >
             {site.logo?.url ? (
-              <img
+              <Box
+                component="img"
                 src={mediaUrl(site.logo.url)}
                 alt={site.logo.alt ?? site.name}
-                style={{ width: 44, height: 44, objectFit: 'contain', borderRadius: 4, flexShrink: 0, display: 'block' }}
+                sx={{ width: 44, height: 44, objectFit: 'contain', borderRadius: 1, flexShrink: 0, display: 'block' }}
               />
             ) : (
-              <div style={{ width: 44, height: 44, borderRadius: 4, background: 'var(--color-primary, #CC0000)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, color: '#ffffff', flexShrink: 0 }}>
+              <Avatar variant="rounded" sx={{ width: 44, height: 44, borderRadius: 1, background: 'var(--color-primary, #CC0000)', fontSize: 14, fontWeight: 900 }}>
                 {site.name.substring(0, 2).toUpperCase()}
-              </div>
+              </Avatar>
             )}
-            <div>
-              <div style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
+            <Box>
+              <Typography sx={{ fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</Typography>
               {site.domain && (
-                <div className="site-nav-domain" style={{ fontSize: 10, color: '#888888' }}>{site.domain}</div>
+                <Typography sx={{ fontSize: 10, color: '#888888', display: { xs: 'none', sm: 'block' } }}>{site.domain}</Typography>
               )}
-            </div>
-          </Link>
+            </Box>
+          </Stack>
 
           {/* Nav links — desktop only, centred between logo and utilities */}
-          <nav className="site-nav-desktop" aria-label="Main navigation">
+          <Box component="nav" aria-label="Main navigation" sx={{ flex: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center' }}>
             {navLinks.map((link) => {
-              const children = (link as any).children as { label: string; href: string; description?: string; openInNewTab?: boolean }[] | undefined
+              const children = (link as any).children as NavChild[] | undefined
               const hasChildren = !!children?.length
               const isOpen = openDropdown === link.href
 
+              const linkSx = {
+                fontSize: '1rem', fontWeight: 500,
+                px: 1.75, height: 64, borderRadius: 0,
+                whiteSpace: 'nowrap', position: 'relative',
+                color: isOpen ? 'var(--color-primary, #CC0000)' : '#333333',
+                '&::after': {
+                  content: '""', position: 'absolute', bottom: 0, left: 14, right: 14, height: 3,
+                  background: 'var(--color-primary, #CC0000)',
+                  transform: isOpen ? 'scaleX(1)' : 'scaleX(0)',
+                  transition: 'transform 0.15s ease',
+                },
+                '&:hover': { color: 'var(--color-primary, #CC0000)', background: 'none' },
+                '&:hover::after': { transform: 'scaleX(1)' },
+              } as const
+
               if (hasChildren) {
                 return (
-                  <button
+                  <Button
                     key={link.href}
-                    type="button"
                     onClick={() => setOpenDropdown(isOpen ? null : link.href)}
                     aria-expanded={isOpen}
-                    style={{
-                      fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-                      fontSize: '1rem', fontWeight: 500,
-                      color: isOpen ? 'var(--color-primary, #CC0000)' : '#333333',
-                      padding: '0 14px', height: 64, display: 'flex', alignItems: 'center', gap: 4,
-                      background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                    }}
-                    className={`site-nav-link${isOpen ? ' site-nav-link-open' : ''}`}
+                    endIcon={<ExpandMoreIcon sx={{ transition: 'transform 0.15s ease', transform: isOpen ? 'rotate(180deg)' : 'none' }} />}
+                    sx={linkSx}
                   >
                     {link.label}
-                    <ChevronDownIcon size={14} style={{ transition: 'transform 0.15s ease', transform: isOpen ? 'rotate(180deg)' : 'none' }} />
-                  </button>
+                  </Button>
                 )
               }
 
               return (
-                <Link
+                <Button
                   key={link.href}
+                  component={Link}
                   href={link.href}
                   target={(link as any).openInNewTab ? '_blank' : undefined}
-                  style={{
-                    fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-                    fontSize: '1rem', fontWeight: 500, color: '#333333',
-                    padding: '0 14px', height: 64, display: 'flex', alignItems: 'center',
-                    textDecoration: 'none', whiteSpace: 'nowrap',
-                  }}
-                  className="site-nav-link"
+                  sx={linkSx}
                 >
                   {link.label}
-                </Link>
+                </Button>
               )
             })}
-          </nav>
+          </Box>
 
           {/* Right utilities */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, marginLeft: 16 }}>
-            <Link
-              href="/search"
-              aria-label="Search"
-              style={{ padding: 8, color: '#555555', display: 'flex', borderRadius: 4, textDecoration: 'none' }}
-              className="site-nav-icon"
-            >
-              <SearchIcon size={18} />
-            </Link>
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', flexShrink: 0, ml: 2 }}>
+            <IconButton component={Link} href="/search" aria-label="Search" sx={{ color: '#555555', '&:hover': { color: '#111111', background: '#f5f5f5' } }}>
+              <SearchIcon fontSize="small" />
+            </IconButton>
             <LangSwitcher currentLocale={locale} />
 
             {/* Hamburger button — mobile only */}
-            <button
-              className="site-nav-hamburger"
+            <IconButton
               onClick={() => setMenuOpen(o => !o)}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
-              style={{ padding: 8, background: 'none', border: 'none', cursor: 'pointer', color: '#333333', borderRadius: 4, display: 'none' }}
+              sx={{ display: { xs: 'flex', md: 'none' }, color: '#333333' }}
             >
-              {menuOpen ? (
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                  <path d="M4 4l14 14M18 4L4 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              ) : (
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                  <path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
+              {menuOpen ? <CloseIcon /> : <MenuIcon />}
+            </IconButton>
+          </Stack>
+        </Toolbar>
 
         {/* Mega-menu dropdown — desktop, shown when a nav item with children is active */}
-        {activeItem && (
-          <div className="site-nav-dropdown" role="region" aria-label={`${activeItem.label} menu`}>
-            <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px 40px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-                <span style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  {activeItem.label}
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setOpenDropdown(null)}
-                  aria-label="Close menu"
-                  style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: '#555555', display: 'flex', borderRadius: 4 }}
-                >
-                  <CloseIcon size={18} />
-                </button>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '28px 40px' }}>
-                {((activeItem as any).children as { label: string; href: string; description?: string; openInNewTab?: boolean }[]).map((child) => (
-                  <Link
-                    key={child.href}
-                    href={child.href}
-                    target={child.openInNewTab ? '_blank' : undefined}
-                    onClick={() => setOpenDropdown(null)}
-                    style={{ textDecoration: 'none', display: 'block' }}
-                    className="site-nav-dropdown-item"
-                  >
-                    <span style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {child.label}
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </span>
-                    {child.description && (
-                      <span style={{ display: 'block', fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '0.875rem', color: '#666666', marginTop: 6, lineHeight: 1.5 }}>
-                        {child.description}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <Fade in={!!activeItem}>
+          <Paper
+            square
+            elevation={4}
+            role="region"
+            aria-label={activeItem ? `${activeItem.label} menu` : undefined}
+            sx={{
+              display: activeItem ? 'block' : 'none',
+              position: 'absolute', top: '100%', left: 0, right: 0,
+              borderTop: '1px solid #f0f0f0', zIndex: 1,
+            }}
+          >
+            {activeItem && activeChildren && (
+              <Box sx={{ maxWidth: 1280, mx: 'auto', p: '32px 24px 40px' }}>
+                <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: '#111111' }}>{activeItem.label}</Typography>
+                    <ArrowForwardIcon sx={{ fontSize: 16, color: '#111111' }} />
+                  </Stack>
+                  <IconButton onClick={() => setOpenDropdown(null)} aria-label="Close menu" size="small" sx={{ color: '#555555' }}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '28px 40px' }}>
+                  {activeChildren.map((child) => (
+                    <Box
+                      key={child.href}
+                      component={Link}
+                      href={child.href}
+                      target={child.openInNewTab ? '_blank' : undefined}
+                      onClick={() => setOpenDropdown(null)}
+                      sx={{ textDecoration: 'none', display: 'block', '&:hover .dropdown-item-title': { color: 'var(--color-primary, #CC0000)' } }}
+                    >
+                      <Stack direction="row" spacing={0.75} className="dropdown-item-title" sx={{ alignItems: 'center', fontSize: '1rem', fontWeight: 700, color: '#111111', transition: 'color 0.1s' }}>
+                        <span>{child.label}</span>
+                        <ArrowForwardIcon sx={{ fontSize: 14 }} />
+                      </Stack>
+                      {child.description && (
+                        <Typography sx={{ fontSize: '0.875rem', color: '#666666', mt: 0.75, lineHeight: 1.5 }}>
+                          {child.description}
+                        </Typography>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </Paper>
+        </Fade>
+      </AppBar>
 
-        {/* Mobile nav drawer — shown when hamburger is open */}
-        {menuOpen && (
-          <nav className="site-nav-mobile-drawer" aria-label="Mobile navigation">
+      {/* Mobile nav drawer */}
+      <Drawer anchor="right" open={menuOpen} onClose={() => setMenuOpen(false)} sx={{ display: { xs: 'block', md: 'none' } }}>
+        <Box sx={{ width: 300 }} role="presentation">
+          <List component="nav" aria-label="Mobile navigation" disablePadding>
             {navLinks.map((link) => {
-              const children = (link as any).children as { label: string; href: string; description?: string; openInNewTab?: boolean }[] | undefined
+              const children = (link as any).children as NavChild[] | undefined
               return (
-                <div key={link.href}>
-                  <Link
+                <Box key={link.href}>
+                  <ListItemButton
+                    component={Link}
                     href={link.href}
                     target={(link as any).openInNewTab ? '_blank' : undefined}
                     onClick={() => setMenuOpen(false)}
-                    style={{
-                      display: 'block',
-                      fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-                      fontSize: '1rem', fontWeight: 500, color: '#333333',
-                      padding: '14px 24px',
-                      textDecoration: 'none',
+                    sx={{
+                      py: 1.75, px: 3, fontSize: '1rem', fontWeight: 500, color: '#333333',
                       borderBottom: children?.length ? 'none' : '1px solid #f0f0f0',
+                      '&:hover': { color: 'var(--color-primary, #CC0000)', background: '#fafafa' },
                     }}
-                    className="site-nav-mobile-link"
                   >
                     {link.label}
-                  </Link>
+                  </ListItemButton>
                   {!!children?.length && (
-                    <div style={{ borderBottom: '1px solid #f0f0f0', paddingBottom: 8 }}>
+                    <Box sx={{ borderBottom: '1px solid #f0f0f0', pb: 1 }}>
                       {children.map((child) => (
-                        <Link
+                        <ListItemButton
                           key={child.href}
+                          component={Link}
                           href={child.href}
                           target={child.openInNewTab ? '_blank' : undefined}
                           onClick={() => setMenuOpen(false)}
-                          style={{
-                            display: 'block',
-                            fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-                            fontSize: '0.9rem', fontWeight: 400, color: '#555555',
-                            padding: '10px 24px 10px 40px',
-                            textDecoration: 'none',
+                          sx={{
+                            py: 1.25, pl: 5, pr: 3, fontSize: '0.9rem', fontWeight: 400, color: '#555555',
+                            '&:hover': { color: 'var(--color-primary, #CC0000)', background: '#fafafa' },
                           }}
-                          className="site-nav-mobile-link"
                         >
                           {child.label}
-                        </Link>
+                        </ListItemButton>
                       ))}
-                    </div>
+                    </Box>
                   )}
-                </div>
+                </Box>
               )
             })}
-          </nav>
-        )}
-      </div>
-
-      <style>{`
-        .site-nav-desktop {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .site-nav-link { position: relative; }
-        .site-nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 14px; right: 14px;
-          height: 3px;
-          background: var(--color-primary, #CC0000);
-          transform: scaleX(0);
-          transition: transform 0.15s ease;
-        }
-        .site-nav-link:hover { color: var(--color-primary, #CC0000) !important; }
-        .site-nav-link:hover::after,
-        .site-nav-link-open::after { transform: scaleX(1); }
-        .site-nav-icon:hover { color: #111111 !important; background: #f5f5f5; }
-        .site-nav-dropdown {
-          position: absolute;
-          top: 100%; left: 0; right: 0;
-          background: #ffffff;
-          border-top: 1px solid #f0f0f0;
-          box-shadow: 0 8px 16px rgba(0,0,0,0.08);
-          animation: site-nav-dropdown-in 0.15s ease;
-        }
-        @keyframes site-nav-dropdown-in {
-          from { opacity: 0; transform: translateY(-4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .site-nav-dropdown-item span:first-child { transition: color 0.1s; }
-        .site-nav-dropdown-item:hover span:first-child { color: var(--color-primary, #CC0000) !important; }
-        .site-nav-mobile-link:hover { color: var(--color-primary, #CC0000) !important; background: #fafafa; }
-        @media (max-width: 768px) {
-          .site-nav-desktop { display: none !important; }
-          .site-nav-hamburger { display: flex !important; }
-        }
-        @media (max-width: 480px) {
-          .site-nav-domain { display: none; }
-        }
-      `}</style>
-    </header>
+          </List>
+        </Box>
+      </Drawer>
+    </Box>
   )
 }

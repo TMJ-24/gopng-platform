@@ -1,5 +1,8 @@
 'use client'
 
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
 const STATS = [
   { value: '9.7M+', label: 'Citizens Served' },
   { value: '22',    label: 'Provinces' },
@@ -9,26 +12,27 @@ const STATS = [
 
 export function StatsSection() {
   return (
-    <section style={{ background: '#232F3E', borderTop: '2px solid #FF9900', borderBottom: '1px solid #1A2536' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 0 }}>
+    <Box component="section" sx={{ background: '#232F3E', borderTop: '2px solid #FF9900', borderBottom: '1px solid #1A2536' }}>
+      <Box sx={{ maxWidth: 1280, mx: 'auto', px: 3, py: 6 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
           {STATS.map((s, i) => (
-            <div
+            <Box
               key={s.label}
-              style={{
+              sx={{
                 textAlign: 'center',
-                padding: '8px 24px',
+                py: 1,
+                px: 3,
                 borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
               }}
             >
-              <div style={{ fontSize: 'clamp(36px,4vw,52px)', fontWeight: 700, color: '#FF9900', letterSpacing: '-0.02em', lineHeight: 1, marginBottom: 8 }}>
+              <Typography sx={{ fontSize: 'clamp(36px,4vw,52px)', fontWeight: 700, color: '#FF9900', letterSpacing: '-0.02em', lineHeight: 1, mb: 1 }}>
                 {s.value}
-              </div>
-              <div style={{ color: '#8D99A8', fontSize: 14, fontWeight: 500, letterSpacing: '0.01em' }}>{s.label}</div>
-            </div>
+              </Typography>
+              <Typography sx={{ color: '#8D99A8', fontSize: 14, fontWeight: 500, letterSpacing: '0.01em' }}>{s.label}</Typography>
+            </Box>
           ))}
-        </div>
-      </div>
-    </section>
+        </Box>
+      </Box>
+    </Box>
   )
 }

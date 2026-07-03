@@ -8,7 +8,7 @@ export function MinistryCTA() {
   if (!site) return null
 
   return (
-    <section style={{ background: '#1a2b4a' }}>
+    <section style={{ background: '#000000' }}>
       <div style={{
         maxWidth: 1280, margin: '0 auto', padding: '56px 24px',
         display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 24,

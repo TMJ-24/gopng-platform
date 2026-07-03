@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Skeleton from '@mui/material/Skeleton'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import ImageIcon from '@mui/icons-material/ImageOutlined'
 import { useSite } from '@/context/SiteContext'
 import { mediaUrl } from '@/lib/media'
 
@@ -13,48 +18,40 @@ function NewsCard({ item }: { item: any }) {
   const imgSrc = mediaUrl(item.featuredImage?.url)
 
   return (
-    <Link href={`/news/${item.slug}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column' }} className="news-card">
+    <Box
+      component={Link}
+      href={`/news/${item.slug}`}
+      sx={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', '&:hover .news-card-img': { transform: 'scale(1.04)' }, '&:hover .news-card-title': { color: 'var(--color-primary, #CC0000)' } }}
+    >
       {/* Image */}
-      <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e8e8e8', flexShrink: 0 }}>
+      <Box sx={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', background: '#e8e8e8', flexShrink: 0 }}>
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={title ?? ''}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.25s ease' }}
-            className="news-card-img"
-          />
+          <Box component="img" src={imgSrc} alt={title ?? ''} className="news-card-img" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.25s ease' }} />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #e0e0e0 0%, #cccccc 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <rect x="4" y="8" width="32" height="24" rx="2" fill="#bbbbbb" />
-              <circle cx="14" cy="16" r="4" fill="#999" />
-              <path d="M4 28l8-8 6 6 5-5 9 7" stroke="#999" strokeWidth="2" fill="none" />
-            </svg>
-          </div>
+          <Box sx={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #e0e0e0 0%, #cccccc 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ImageIcon sx={{ fontSize: 40, color: '#999' }} />
+          </Box>
         )}
-      </div>
+      </Box>
 
       {/* Text */}
-      <div style={{ padding: '16px 0', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {date && (
-          <span style={{ fontSize: '0.875rem', color: '#888888', marginBottom: 8, display: 'block' }}>{date}</span>
-        )}
-        <h3 style={{ fontSize: 'calc(1.275rem + 0.3vw)', fontWeight: 700, color: '#111111', lineHeight: 1.35, margin: '0 0 12px', flex: 1 }} className="news-card-title line-clamp-3">
+      <Box sx={{ py: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {date && <Typography sx={{ fontSize: '0.875rem', color: '#888888', mb: 1 }}>{date}</Typography>}
+        <Typography
+          component="h3"
+          className="news-card-title"
+          sx={{
+            fontSize: 'calc(1.275rem + 0.3vw)', fontWeight: 700, color: '#111111', lineHeight: 1.35, mb: 1.5, flex: 1,
+            display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', transition: 'color 0.1s',
+          }}
+        >
           {title}
-        </h3>
-        <span style={{ fontSize: 13, color: 'var(--color-primary, #CC0000)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          Read more
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-      </div>
-
-      <style>{`
-        .news-card:hover .news-card-img { transform: scale(1.04); }
-        .news-card:hover .news-card-title { color: var(--color-primary, #CC0000); }
-      `}</style>
-    </Link>
+        </Typography>
+        <Typography sx={{ fontSize: 13, color: 'var(--color-primary, #CC0000)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+          Read more <ArrowForwardIcon sx={{ fontSize: 14 }} />
+        </Typography>
+      </Box>
+    </Box>
   )
 }
 
@@ -72,49 +69,49 @@ export function NewsSection() {
   }, [site?.id])
 
   return (
-    <section style={{ background: '#ffffff', borderBottom: '1px solid #e8e8e8' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 24px' }}>
+    <Box component="section" sx={{ background: '#ffffff', borderBottom: '1px solid #e8e8e8' }}>
+      <Box sx={{ maxWidth: 1280, mx: 'auto', px: 3, py: 7.5 }}>
 
         {/* Section header */}
-        <div style={{ marginBottom: 32 }}>
-          <h2 style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: 'calc(1.325rem + 0.9vw)', fontWeight: 800, color: '#111111', margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+        <Box sx={{ mb: 4 }}>
+          <Typography component="h2" sx={{ fontSize: 'calc(1.325rem + 0.9vw)', fontWeight: 800, color: '#111111', mb: 1.5, letterSpacing: '-0.01em' }}>
             Latest News &amp; Announcements
-          </h2>
-          <p style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1rem', fontWeight: 400, color: '#555555', margin: 0, lineHeight: 1.6, maxWidth: 640 }}>
+          </Typography>
+          <Typography sx={{ fontSize: '1rem', fontWeight: 400, color: '#555555', lineHeight: 1.6, maxWidth: 640 }}>
             Official news, press releases and announcements from {site?.name ?? 'the Government of Papua New Guinea'}.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 28 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 3.5 }}>
             {[1, 2, 3].map(i => (
-              <div key={i}>
-                <div style={{ width: '100%', aspectRatio: '16/9', background: '#eeeeee', borderRadius: 2 }} />
-                <div style={{ padding: '16px 0' }}>
-                  <div style={{ height: 12, width: 80, background: '#e0e0e0', borderRadius: 2, marginBottom: 10 }} />
-                  <div style={{ height: 16, background: '#e8e8e8', borderRadius: 2, marginBottom: 6 }} />
-                  <div style={{ height: 16, width: '70%', background: '#e8e8e8', borderRadius: 2 }} />
-                </div>
-              </div>
+              <Box key={i}>
+                <Skeleton variant="rectangular" sx={{ width: '100%', aspectRatio: '16/9', borderRadius: '2px' }} />
+                <Box sx={{ py: 2 }}>
+                  <Skeleton width="30%" height={12} sx={{ mb: 1.25 }} />
+                  <Skeleton height={16} sx={{ mb: 0.75 }} />
+                  <Skeleton width="70%" height={16} />
+                </Box>
+              </Box>
             ))}
-          </div>
+          </Box>
         ) : news.length === 0 ? (
-          <div style={{ padding: '40px 0', color: '#888888', fontSize: 14 }}>No news published yet.</div>
+          <Typography sx={{ py: 5, color: '#888888', fontSize: 14 }}>No news published yet.</Typography>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 28 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 3.5 }}>
             {news.map((item: any) => <NewsCard key={item.id} item={item} />)}
-          </div>
+          </Box>
         )}
 
         {/* View all link */}
         {news.length > 0 && (
-          <div style={{ marginTop: 32, textAlign: 'right' }}>
-            <Link href="/news" style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-primary, #CC0000)', textDecoration: 'none' }}>
+          <Box sx={{ mt: 4, textAlign: 'right' }}>
+            <Typography component={Link} href="/news" sx={{ fontSize: 14, fontWeight: 700, color: 'var(--color-primary, #CC0000)', textDecoration: 'none' }}>
               View all news →
-            </Link>
-          </div>
+            </Typography>
+          </Box>
         )}
-      </div>
-    </section>
+      </Box>
+    </Box>
   )
 }

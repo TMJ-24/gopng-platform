@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import Button from '@mui/material/Button'
 
 export function LangSwitcher({ currentLocale }: { currentLocale: string }) {
   const pathname = usePathname()
@@ -17,17 +18,18 @@ export function LangSwitcher({ currentLocale }: { currentLocale: string }) {
   }
 
   return (
-    <button
+    <Button
       onClick={handleSwitch}
       aria-label={`Switch to ${label}`}
-      style={{
-        fontSize: 12, fontWeight: 700, padding: '7px 14px', borderRadius: 4,
+      disableElevation
+      sx={{
+        fontSize: 12, fontWeight: 700, px: 1.75, py: 0.875, borderRadius: 1,
         background: '#FF9900', color: '#000716',
-        border: '1px solid #CC7A00', cursor: 'pointer', whiteSpace: 'nowrap',
-        transition: 'background 0.1s',
+        border: '1px solid #CC7A00', whiteSpace: 'nowrap',
+        '&:hover': { background: '#E68A00', border: '1px solid #CC7A00' },
       }}
     >
       {label}
-    </button>
+    </Button>
   )
 }

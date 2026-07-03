@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import React from 'react'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
+import { MuiProviders } from '@/components/MuiProviders'
 import { getSiteByDomain, getThemeColors } from '@/lib/tenant'
 import { SiteNav } from '@/components/SiteNav'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -102,17 +103,19 @@ export default async function RootLayout({ children, searchParams }: Props) {
   return (
     <html lang={locale === 'tpi' ? 'tpi' : 'en'} style={themeVars} className={`${roboto.variable} ${roboto.className}`}>
       <body className="min-h-screen flex flex-col bg-white">
-        <SiteProvider site={site}>
-          <Suspense>
-            <SiteNav site={site} locale={locale} />
-          </Suspense>
-          <main className="flex-1">{children}</main>
-          <SiteFooter site={site} />
-          <BackToTop />
-        </SiteProvider>
+        <MuiProviders>
+          <SiteProvider site={site}>
+            <Suspense>
+              <SiteNav site={site} locale={locale} />
+            </Suspense>
+            <main className="flex-1">{children}</main>
+            <SiteFooter site={site} />
+            <BackToTop />
+          </SiteProvider>
 
-        {/* Analytics — loads after interactive, never blocks paint */}
-        <Analytics />
+          {/* Analytics — loads after interactive, never blocks paint */}
+          <Analytics />
+        </MuiProviders>
       </body>
     </html>
   )
