@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { adminOnly, publicRead } from '@/access'
+import { adminOnly, editorOwnSiteOrAdmin, publicRead } from '@/access'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 import { provisionSiteRepo } from '@/hooks/provisionSiteRepo'
 
@@ -15,7 +15,7 @@ export const Sites: CollectionConfig = {
   access: {
     read: publicRead,
     create: adminOnly,
-    update: adminOnly,
+    update: editorOwnSiteOrAdmin,
     delete: adminOnly,
   },
   hooks: {

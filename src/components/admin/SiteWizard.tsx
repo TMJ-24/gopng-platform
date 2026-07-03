@@ -89,8 +89,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   soe:             'State-Owned Enterprise Website',
 }
 
-const STEPS: WizardStep[] = ['template', 'sections', 'details', 'admin', 'review']
-const STEP_LABELS = ['Template', 'Sections', 'Site Details', 'Admin User', 'Review']
+const ADMIN_STEPS: WizardStep[] = ['template', 'sections', 'details', 'admin', 'review']
+const ADMIN_STEP_LABELS = ['Template', 'Sections', 'Site Details', 'Admin User', 'Review']
+const EDITOR_STEPS: WizardStep[] = ['template', 'sections', 'details', 'review']
+const EDITOR_STEP_LABELS = ['Template', 'Sections', 'Site Details', 'Review']
 
 const labelStyle: React.CSSProperties = {
   display: 'block', fontWeight: 600, fontSize: 13, color: '#374151', marginBottom: 6,
@@ -158,7 +160,10 @@ function SortableSectionRow({ section, onToggle }: { section: Section; onToggle:
 }
 
 export function SiteWizardView() {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
+  const isEditor = (user as any)?.role === 'editor'
+  const STEPS = isEditor ? EDITOR_STEPS : ADMIN_STEPS
+  const STEP_LABELS = isEditor ? EDITOR_STEP_LABELS : ADMIN_STEP_LABELS
   const [step, setStep] = useState<WizardStep>('template')
   const [templates, setTemplates] = useState<Template[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -461,8 +466,10 @@ export function SiteWizardView() {
               ['Domain',        data.domain],
               ['Agency Type',   AGENCY_TYPES.find(t => t.value === data.agencyType)?.label ?? data.agencyType],
               ['Theme',         THEMES.find(t => t.value === data.theme)?.label ?? data.theme],
-              ['Admin Email',   data.adminEmail],
-              ['Admin Name',    [data.adminFirstName, data.adminLastName].filter(Boolean).join(' ') || '—'],
+              ...(isEditor ? [] : [
+                ['Admin Email', data.adminEmail],
+                ['Admin Name',  [data.adminFirstName, data.adminLastName].filter(Boolean).join(' ') || '—'],
+              ]),
               ['Sections',      `${data.sections.filter(s => s.enabled).length} enabled`],
             ] as [string, string][]).map(([label, value]) => (
               <div key={label} style={{ display: 'flex', padding: '11px 18px', borderBottom: '1px solid #f3f4f6', fontSize: 14 }}>
@@ -472,7 +479,10 @@ export function SiteWizardView() {
             ))}
           </div>
           <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '11px 16px', color: '#92400e', fontSize: 13 }}>
-            ⚠️ This will create the site record, an editor user, seed default pages, and send a welcome email to <strong>{data.adminEmail}</strong>.
+            {isEditor
+              ? <>⚠️ This will create the site, seed default pages, assign it to your account, and email you when it&apos;s live.</>
+              : <>⚠️ This will create the site record, an editor user, seed default pages, and send a welcome email to <strong>{data.adminEmail}</strong>.</>
+            }
           </div>
         </div>
       )}

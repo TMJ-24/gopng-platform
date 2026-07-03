@@ -1,56 +1,19 @@
 'use client'
 
 import { useSite } from '@/context/SiteContext'
-import { HeroSection }      from '@/components/sections/HeroSection'
-import { ServicesSection }  from '@/components/sections/ServicesSection'
-import { StatsSection }     from '@/components/sections/StatsSection'
-import { NewsSection }      from '@/components/sections/NewsSection'
-import { DirectorySection } from '@/components/sections/DirectorySection'
-import { OpenDataSection }  from '@/components/sections/OpenDataSection'
-import { AboutSection }     from '@/components/sections/AboutSection'
-import { CTASection }       from '@/components/sections/CTASection'
+import { PortalHomepage }   from '@/components/homepages/PortalHomepage'
+import { MinistryHomepage } from '@/components/homepages/MinistryHomepage'
 
-type SectionType = 'hero' | 'services' | 'stats' | 'news' | 'directory' | 'opendata' | 'about' | 'cta'
-
-const SECTION_REGISTRY: Record<SectionType, React.ComponentType> = {
-  hero:      HeroSection,
-  services:  ServicesSection,
-  stats:     StatsSection,
-  news:      NewsSection,
-  directory: DirectorySection,
-  opendata:  OpenDataSection,
-  about:     AboutSection,
-  cta:       CTASection,
+const HOMEPAGE_REGISTRY: Record<string, React.ComponentType> = {
+  ministry: MinistryHomepage,
 }
-
-// Default section order when no template is assigned
-const DEFAULT_SECTIONS: { type: SectionType; enabled: boolean }[] = [
-  { type: 'hero',      enabled: true },
-  { type: 'services',  enabled: true },
-  { type: 'stats',     enabled: true },
-  { type: 'news',      enabled: true },
-  { type: 'directory', enabled: true },
-  { type: 'opendata',  enabled: true },
-  { type: 'cta',       enabled: true },
-]
 
 export default function HomePage() {
   const site = useSite()
-
   if (!site) return null
 
-  // Read sections from the assigned template; fall back to defaults
-  const templateSections = (site as any).template?.sections as { type: SectionType; enabled: boolean }[] | undefined
-  const sections = templateSections?.length ? templateSections : DEFAULT_SECTIONS
+  const category = (site as any).template?.category as string | undefined
+  const Homepage = (category && HOMEPAGE_REGISTRY[category]) || PortalHomepage
 
-  return (
-    <>
-      {sections
-        .filter(s => s.enabled !== false)
-        .map(s => {
-          const Component = SECTION_REGISTRY[s.type]
-          return Component ? <Component key={s.type} /> : null
-        })}
-    </>
-  )
+  return <Homepage />
 }
