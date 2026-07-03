@@ -45,8 +45,11 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Standalone server + static assets
+# `output: 'standalone'` does NOT include the top-level public/ directory —
+# Next.js only bundles what the server needs, so it must be copied explicitly.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Full node_modules — provides payload CLI, tsx loader, and all runtime deps.
 # Overwrites the lean standalone node_modules; server.js still works because
