@@ -63,7 +63,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
               </div>
             )}
             <div>
-              <div style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
+              <div style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontWeight: 700, fontSize: 14, color: '#111111', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{site.name}</div>
               {site.domain && (
                 <div className="site-nav-domain" style={{ fontSize: 10, color: '#888888' }}>{site.domain}</div>
               )}
@@ -85,7 +85,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                     onClick={() => setOpenDropdown(isOpen ? null : link.href)}
                     aria-expanded={isOpen}
                     style={{
-                      fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                      fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
                       fontSize: '1rem', fontWeight: 500,
                       color: isOpen ? 'var(--color-primary, #CC0000)' : '#333333',
                       padding: '0 14px', height: 64, display: 'flex', alignItems: 'center', gap: 4,
@@ -105,7 +105,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                   href={link.href}
                   target={(link as any).openInNewTab ? '_blank' : undefined}
                   style={{
-                    fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                    fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
                     fontSize: '1rem', fontWeight: 500, color: '#333333',
                     padding: '0 14px', height: 64, display: 'flex', alignItems: 'center',
                     textDecoration: 'none', whiteSpace: 'nowrap',
@@ -156,7 +156,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
           <div className="site-nav-dropdown" role="region" aria-label={`${activeItem.label} menu`}>
             <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px 40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-                <span style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1.25rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 8 }}>
                   {activeItem.label}
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
@@ -179,12 +179,12 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                     style={{ textDecoration: 'none', display: 'block' }}
                     className="site-nav-dropdown-item"
                   >
-                    <span style={{ fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '1rem', fontWeight: 700, color: '#111111', display: 'flex', alignItems: 'center', gap: 6 }}>
                       {child.label}
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </span>
                     {child.description && (
-                      <span style={{ display: 'block', fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '0.875rem', color: '#666666', marginTop: 6, lineHeight: 1.5 }}>
+                      <span style={{ display: 'block', fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif', fontSize: '0.875rem', color: '#666666', marginTop: 6, lineHeight: 1.5 }}>
                         {child.description}
                       </span>
                     )}
@@ -208,7 +208,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                     onClick={() => setMenuOpen(false)}
                     style={{
                       display: 'block',
-                      fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                      fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
                       fontSize: '1rem', fontWeight: 500, color: '#333333',
                       padding: '14px 24px',
                       textDecoration: 'none',
@@ -228,7 +228,7 @@ export function SiteNav({ site, locale }: { site: Site; locale: string }) {
                           onClick={() => setMenuOpen(false)}
                           style={{
                             display: 'block',
-                            fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                            fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
                             fontSize: '0.9rem', fontWeight: 400, color: '#555555',
                             padding: '10px 24px 10px 40px',
                             textDecoration: 'none',

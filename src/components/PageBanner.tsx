@@ -1,6 +1,6 @@
 import { Breadcrumbs } from './Breadcrumbs'
 
-const FONT = '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+const FONT = '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 interface BreadcrumbItem { label: string; href?: string }
 

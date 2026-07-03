@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 import { Suspense } from 'react'
 import React from 'react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import { getSiteByDomain, getThemeColors } from '@/lib/tenant'
 import { SiteNav } from '@/components/SiteNav'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -11,10 +11,11 @@ import { BackToTop } from '@/components/BackToTop'
 import { Analytics } from '@/components/Analytics'
 import './styles.css'
 
-const inter = Inter({
+const roboto = Roboto({
   subsets: ['latin'],
+  weight: ['300', '400', '500', '700', '900'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-roboto',
 })
 
 type Props = {
@@ -76,7 +77,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
 
   if (!site) {
     return (
-      <html lang="en" className={inter.className}>
+      <html lang="en" className={roboto.className}>
         <body className="min-h-screen flex items-center justify-center bg-gray-100">
           <div className="text-center p-8">
             <div className="text-6xl font-black text-gray-200 mb-4">404</div>
@@ -99,7 +100,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
   } as React.CSSProperties
 
   return (
-    <html lang={locale === 'tpi' ? 'tpi' : 'en'} style={themeVars} className={`${inter.variable} ${inter.className}`}>
+    <html lang={locale === 'tpi' ? 'tpi' : 'en'} style={themeVars} className={`${roboto.variable} ${roboto.className}`}>
       <body className="min-h-screen flex flex-col bg-white">
         <SiteProvider site={site}>
           <Suspense>

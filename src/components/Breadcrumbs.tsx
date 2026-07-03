@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 type Crumb = { label: string; href?: string }
 
-const FONT = '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+const FONT = '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
   return (

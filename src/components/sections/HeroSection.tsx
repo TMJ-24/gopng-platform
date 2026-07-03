@@ -27,7 +27,7 @@ export function HeroSection() {
       }}>
         <div style={{ maxWidth: 480 }}>
           <h1 style={{
-            fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'calc(1.475rem + 2.7vw)',
             fontWeight: 800,
             color: '#1a2b4a',
@@ -39,7 +39,7 @@ export function HeroSection() {
             {site.name}
           </h1>
           <p style={{
-            fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            fontFamily: '"Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
             fontWeight: 400,
             color: '#555555',
