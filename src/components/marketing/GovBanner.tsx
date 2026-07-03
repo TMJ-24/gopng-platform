@@ -71,16 +71,16 @@ export function GovBanner() {
   const [open, setOpen] = useState(false)
 
   return (
-    <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e0e0e0', fontSize: 13 }}>
-      <div style={{ ...CONTAINER, padding: '6px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', rowGap: 4, columnGap: 12 }}>
+    <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e0e0e0', fontSize: 11 }}>
+      <div style={{ ...CONTAINER, padding: '4px 24px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 4, columnGap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <PngFlag size={14} />
-          <span style={{ color: '#333333', fontWeight: 500, fontSize: 13 }}>An Official PNG Government Website</span>
+          <PngFlag size={12} />
+          <span style={{ color: '#333333', fontWeight: 500, fontSize: 11 }}>An Official PNG Government Website</span>
         </div>
         <button
           onClick={() => setOpen(o => !o)}
           aria-expanded={open}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#0066cc', fontSize: 13, fontWeight: 600, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#0066cc', fontSize: 11, fontWeight: 600, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
         >
           How to identify
           <ExpandIcon open={open} />
@@ -89,15 +89,15 @@ export function GovBanner() {
 
       {open && (
         <div style={{ background: '#f0f4f8', borderTop: '1px solid #dde3ea' }}>
-          <div style={{ ...CONTAINER, padding: '18px 24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+          <div style={{ ...CONTAINER, padding: '14px 24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
             {PANEL_ITEMS.map(item => (
-              <div key={item.title} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', border: `1px solid ${item.borderColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div key={item.title} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${item.borderColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {item.icon}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, color: '#111', marginBottom: 4, fontSize: 14, lineHeight: 1.4 }}>{item.title}</div>
-                  <div style={{ color: '#555', lineHeight: 1.6, fontSize: 13 }}>{item.body}</div>
+                  <div style={{ fontWeight: 700, color: '#111', marginBottom: 3, fontSize: 12, lineHeight: 1.4 }}>{item.title}</div>
+                  <div style={{ color: '#555', lineHeight: 1.5, fontSize: 11 }}>{item.body}</div>
                 </div>
               </div>
             ))}

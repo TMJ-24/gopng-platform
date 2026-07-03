@@ -62,17 +62,6 @@ export function Hero({ eyebrow, title, description, ctas, compact }: Props) {
   if (compact) {
     return (
       <section style={{ position: 'relative', overflow: 'hidden', background: bg }}>
-        <img
-          src="/cresent.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: 'absolute', top: '50%', left: '50%',
-            width: 640, height: 640, objectFit: 'contain',
-            transform: 'translate(-50%, -50%)',
-            opacity: 0.1, pointerEvents: 'none',
-          }}
-        />
         <div style={{ position: 'relative', maxWidth: 1120, margin: '0 auto', padding: '64px 24px 56px' }}>
           {textBlock}
         </div>

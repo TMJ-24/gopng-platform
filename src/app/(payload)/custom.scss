@@ -700,9 +700,14 @@ select:focus {
   display: none !important;
 }
 
-/* ── Login page — wrap form in a Cloudscape card ─────────────────────── */
+/* ── Login page — matches the public landing page's visual language:
+   faded-red background + crest watermark + Roboto + PNG red accents,
+   instead of the Cloudscape blue used through the rest of the admin ── */
 .template-minimal {
-  background: #F2F3F3 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #F6DEDB !important;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif !important;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -710,12 +715,13 @@ select:focus {
 }
 
 .template-minimal__wrap {
+  position: relative !important;
   width: 100% !important;
   max-width: 440px !important;
   background: #FFFFFF !important;
-  border: 1px solid #D5DBDB !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(0, 7, 22, 0.10) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.14) !important;
   padding: 40px 40px 36px !important;
   margin: 0 auto !important;
 }
@@ -731,24 +737,33 @@ select:focus {
 .template-minimal__wrap .form-header__heading {
   font-size: 20px !important;
   font-weight: 700 !important;
-  color: #000716 !important;
+  color: #1A1A1A !important;
   text-align: center !important;
   margin-bottom: 24px !important;
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
-/* Login button — full width */
+/* Login button — full width, PNG red */
 .template-minimal__wrap .btn.btn--style-primary {
   width: 100% !important;
   justify-content: center !important;
-  padding: 12px !important;
-  font-size: 14px !important;
-  border-radius: 4px !important;
+  background: #CE1126 !important;
+  border: 1px solid #CE1126 !important;
+  padding: 13px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
   margin-top: 8px !important;
+}
+
+.template-minimal__wrap .btn.btn--style-primary:hover {
+  background: #A50E1F !important;
+  border-color: #A50E1F !important;
 }
 
 /* Forgot password link */
 .template-minimal__wrap a {
-  color: #0972D3 !important;
+  color: #CE1126 !important;
   font-size: 13px !important;
 }
 
@@ -761,6 +776,12 @@ select:focus {
   width: 100% !important;
   padding: 10px 14px !important;
   font-size: 14px !important;
+  border-radius: 6px !important;
+}
+
+.template-minimal__wrap input:focus {
+  border-color: #CE1126 !important;
+  box-shadow: 0 0 0 2px rgba(206, 17, 38, 0.12) !important;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────────────── */
