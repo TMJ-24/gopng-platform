@@ -322,11 +322,7 @@ export function AdminNav() {
           </button>
           {!collapsed && (
             <Link href="/admin" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 4, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: 0, background: '#000', clipPath: 'polygon(0 0,100% 0,0 100%)' }} />
-                <div style={{ position: 'absolute', inset: 0, background: '#CE1126', clipPath: 'polygon(100% 0,100% 100%,0 100%)' }} />
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>⭐</div>
-              </div>
+              <img src="/cresent.png" alt="Government of Papua New Guinea" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 13, color: '#FFFFFF', whiteSpace: 'nowrap' }}>GoPNG Platform</div>
                 <div style={{ fontSize: 11, color: '#FFFFFF', opacity: 0.7, marginTop: 1, whiteSpace: 'nowrap' }}>Admin Console</div>
