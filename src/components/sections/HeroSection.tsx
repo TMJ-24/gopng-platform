@@ -14,10 +14,10 @@ export function HeroSection() {
   return (
     <section className="hero-section" style={{ display: 'flex', minHeight: 420, overflow: 'hidden' }}>
 
-      {/* ── Left panel — solid brand colour ─────────── */}
+      {/* ── Left panel — pale hero background ────────── */}
       <div className="hero-panel-left" style={{
         flex: '0 0 50%',
-        background: 'var(--color-primary, #CC0000)',
+        background: '#F4E9F6',
         display: 'flex',
         alignItems: 'center',
         paddingTop: 'clamp(40px, 6vw, 80px)',
@@ -30,7 +30,7 @@ export function HeroSection() {
             fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'calc(1.475rem + 2.7vw)',
             fontWeight: 800,
-            color: '#ffffff',
+            color: '#1a2b4a',
             lineHeight: 1.1,
             margin: '0 0 20px',
             letterSpacing: '-0.02em',
@@ -42,7 +42,7 @@ export function HeroSection() {
             fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
             fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
             fontWeight: 400,
-            color: 'rgba(255,255,255,0.85)',
+            color: '#555555',
             lineHeight: 1.6,
             margin: '0 0 32px',
           }}>
@@ -54,13 +54,13 @@ export function HeroSection() {
             style={{
               display: 'inline-block',
               padding: '11px 26px',
-              background: '#ffffff',
-              color: 'var(--color-primary, #CC0000)',
+              background: 'var(--color-primary, #CC0000)',
+              color: '#ffffff',
               fontWeight: 700,
               fontSize: 14,
               borderRadius: 2,
               textDecoration: 'none',
-              border: '2px solid #ffffff',
+              border: '2px solid var(--color-primary, #CC0000)',
             }}
           >
             Read more

@@ -186,13 +186,25 @@ export interface Site {
    */
   template?: (number | null) | Template;
   /**
-   * Custom nav links. Leave empty to use default menu.
+   * Custom nav links. Leave empty to use default menu. Add children to a link to show it as a dropdown mega-menu.
    */
   navigation?:
     | {
         label: string;
         href: string;
         openInNewTab?: boolean | null;
+        /**
+         * Optional sub-links shown in a dropdown under this item.
+         */
+        children?:
+          | {
+              label: string;
+              href: string;
+              description?: string | null;
+              openInNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -661,6 +673,15 @@ export interface SitesSelect<T extends boolean = true> {
         label?: T;
         href?: T;
         openInNewTab?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              description?: T;
+              openInNewTab?: T;
+              id?: T;
+            };
         id?: T;
       };
   socialLinks?:

@@ -10,7 +10,12 @@ export type Site = {
   status: string
   logo?: { url: string; alt?: string }
   heroImage?: { url: string; alt?: string }
-  navigation?: { label: string; href: string; openInNewTab?: boolean }[]
+  navigation?: {
+    label: string
+    href: string
+    openInNewTab?: boolean
+    children?: { label: string; href: string; description?: string; openInNewTab?: boolean }[]
+  }[]
   socialLinks?: {
     facebook?: string
     twitter?: string

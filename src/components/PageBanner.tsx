@@ -15,7 +15,7 @@ interface PageBannerProps {
 export function PageBanner({ title, subtitle, breadcrumbs, searchPlaceholder, aside }: PageBannerProps) {
   return (
     <section style={{
-      background: 'color-mix(in srgb, var(--color-primary, #CC0000) 8%, #ffffff)',
+      background: '#F4E9F6',
       padding: '40px 0 36px',
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>

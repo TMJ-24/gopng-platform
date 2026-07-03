@@ -211,6 +211,16 @@ export function BriefcaseIcon({ size, ...p }: IconProps) {
   )
 }
 
+export function ShieldAlertIcon({ size, ...p }: IconProps) {
+  return (
+    <svg {...defaults(size)} {...p}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <line x1="12" y1="8" x2="12" y2="13" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  )
+}
+
 export function DatabaseIcon({ size, ...p }: IconProps) {
   return (
     <svg {...defaults(size)} {...p}>

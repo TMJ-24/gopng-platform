@@ -101,11 +101,22 @@ export const Sites: CollectionConfig = {
     {
       name: 'navigation',
       type: 'array',
-      admin: { description: 'Custom nav links. Leave empty to use default menu.' },
+      admin: { description: 'Custom nav links. Leave empty to use default menu. Add children to a link to show it as a dropdown mega-menu.' },
       fields: [
         { name: 'label', type: 'text', required: true },
         { name: 'href', type: 'text', required: true },
         { name: 'openInNewTab', type: 'checkbox', defaultValue: false },
+        {
+          name: 'children',
+          type: 'array',
+          admin: { description: 'Optional sub-links shown in a dropdown under this item.' },
+          fields: [
+            { name: 'label', type: 'text', required: true },
+            { name: 'href', type: 'text', required: true },
+            { name: 'description', type: 'text' },
+            { name: 'openInNewTab', type: 'checkbox', defaultValue: false },
+          ],
+        },
       ],
     },
     {
