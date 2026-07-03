@@ -1,6 +1,5 @@
 import type { CollectionConfig } from 'payload'
 import { adminOnly, editorOwnSiteOrAdmin, publicRead } from '@/access'
-import { revalidateAfterChange } from '@/hooks/revalidate'
 import { provisionSiteRepo } from '@/hooks/provisionSiteRepo'
 
 export const Sites: CollectionConfig = {
@@ -19,7 +18,7 @@ export const Sites: CollectionConfig = {
     delete: adminOnly,
   },
   hooks: {
-    afterChange: [provisionSiteRepo, revalidateAfterChange(['sites'])],
+    afterChange: [provisionSiteRepo],
   },
   fields: [
     {
@@ -69,17 +68,6 @@ export const Sites: CollectionConfig = {
       ],
     },
     {
-      name: 'theme',
-      type: 'select',
-      defaultValue: 'default',
-      options: [
-        { label: 'Default', value: 'default' },
-        { label: 'Blue (GoPNG)', value: 'blue' },
-        { label: 'Green', value: 'green' },
-        { label: 'Red', value: 'red' },
-      ],
-    },
-    {
       name: 'status',
       type: 'select',
       required: true,
@@ -88,55 +76,6 @@ export const Sites: CollectionConfig = {
         { label: 'Draft', value: 'draft' },
         { label: 'Active', value: 'active' },
         { label: 'Inactive', value: 'inactive' },
-      ],
-    },
-    { name: 'logo', type: 'upload', relationTo: 'media' },
-    { name: 'heroImage', type: 'upload', relationTo: 'media' },
-    {
-      name: 'template',
-      type: 'relationship',
-      relationTo: 'templates',
-      admin: { description: 'Website template controlling homepage section layout.' },
-    },
-    {
-      name: 'navigation',
-      type: 'array',
-      admin: { description: 'Custom nav links. Leave empty to use default menu. Add children to a link to show it as a dropdown mega-menu.' },
-      fields: [
-        { name: 'label', type: 'text', required: true },
-        { name: 'href', type: 'text', required: true },
-        { name: 'openInNewTab', type: 'checkbox', defaultValue: false },
-        {
-          name: 'children',
-          type: 'array',
-          admin: { description: 'Optional sub-links shown in a dropdown under this item.' },
-          fields: [
-            { name: 'label', type: 'text', required: true },
-            { name: 'href', type: 'text', required: true },
-            { name: 'description', type: 'text' },
-            { name: 'openInNewTab', type: 'checkbox', defaultValue: false },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'socialLinks',
-      type: 'group',
-      fields: [
-        { name: 'facebook', type: 'text' },
-        { name: 'twitter', type: 'text' },
-        { name: 'instagram', type: 'text' },
-        { name: 'youtube', type: 'text' },
-      ],
-    },
-    {
-      name: 'contactInfo',
-      type: 'group',
-      fields: [
-        { name: 'email', type: 'email' },
-        { name: 'phone', type: 'text' },
-        { name: 'address', type: 'textarea' },
-        { name: 'poBox', type: 'text', label: 'PO Box' },
       ],
     },
 

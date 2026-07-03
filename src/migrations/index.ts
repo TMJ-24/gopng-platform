@@ -7,6 +7,7 @@ import * as migration_20260703_000000_templates_category_values from './20260703
 import * as migration_20260703_000001_seed_templates from './20260703_000001_seed_templates';
 import * as migration_20260703_000002_pages_layout_blocks from './20260703_000002_pages_layout_blocks';
 import * as migration_20260703_000003_sites_navigation_children from './20260703_000003_sites_navigation_children';
+import * as migration_20260703_130000_trim_to_platform_control_plane from './20260703_130000_trim_to_platform_control_plane';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260703_000003_sites_navigation_children.up,
     down: migration_20260703_000003_sites_navigation_children.down,
     name: '20260703_000003_sites_navigation_children'
+  },
+  {
+    up: migration_20260703_130000_trim_to_platform_control_plane.up,
+    down: migration_20260703_130000_trim_to_platform_control_plane.down,
+    name: '20260703_130000_trim_to_platform_control_plane'
   },
 ];

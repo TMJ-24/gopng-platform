@@ -68,14 +68,8 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
-    media: Media;
     sites: Site;
-    pages: Page;
-    news: News;
-    departments: Department;
-    documents: Document;
     'contact-submissions': ContactSubmission;
-    templates: Template;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,14 +78,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     sites: SitesSelect<false> | SitesSelect<true>;
-    pages: PagesSelect<false> | PagesSelect<true>;
-    news: NewsSelect<false> | NewsSelect<true>;
-    departments: DepartmentsSelect<false> | DepartmentsSelect<true>;
-    documents: DocumentsSelect<false> | DocumentsSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
-    templates: TemplatesSelect<false> | TemplatesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -177,49 +165,7 @@ export interface Site {
    */
   domain?: string | null;
   agencyType: 'ministry' | 'department' | 'authority' | 'commission' | 'statutory-body' | 'provincial' | 'soe';
-  theme?: ('default' | 'blue' | 'green' | 'red') | null;
   status: 'draft' | 'active' | 'inactive';
-  logo?: (number | null) | Media;
-  heroImage?: (number | null) | Media;
-  /**
-   * Website template controlling homepage section layout.
-   */
-  template?: (number | null) | Template;
-  /**
-   * Custom nav links. Leave empty to use default menu. Add children to a link to show it as a dropdown mega-menu.
-   */
-  navigation?:
-    | {
-        label: string;
-        href: string;
-        openInNewTab?: boolean | null;
-        /**
-         * Optional sub-links shown in a dropdown under this item.
-         */
-        children?:
-          | {
-              label: string;
-              href: string;
-              description?: string | null;
-              openInNewTab?: boolean | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  socialLinks?: {
-    facebook?: string | null;
-    twitter?: string | null;
-    instagram?: string | null;
-    youtube?: string | null;
-  };
-  contactInfo?: {
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-    poBox?: string | null;
-  };
   /**
    * GitHub repository name — set automatically when the site is created.
    */
@@ -229,266 +175,6 @@ export interface Site {
    * Current state of the static site deployment.
    */
   deployStatus?: ('none' | 'building' | 'deployed' | 'failed') | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "templates".
- */
-export interface Template {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string | null;
-  thumbnail?: (number | null) | Media;
-  category: 'portal' | 'ministry' | 'department' | 'provincial' | 'authority' | 'commission' | 'statutory-body' | 'soe';
-  defaultTheme?: ('default' | 'blue' | 'green' | 'red') | null;
-  /**
-   * Homepage sections — drag to reorder, toggle to enable/disable, × to remove.
-   */
-  sections?:
-    | {
-        type: 'hero' | 'services' | 'stats' | 'news' | 'directory' | 'opendata' | 'about' | 'cta';
-        enabled?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Use as the default template when none is selected for a site.
-   */
-  isDefault?: boolean | null;
-  isActive?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
- */
-export interface Page {
-  id: number;
-  title: string;
-  /**
-   * Auto-generated from title. Used in page URLs.
-   */
-  slug: string;
-  site: number | Site;
-  /**
-   * Compose the page from reusable sections — drag to reorder.
-   */
-  layout?:
-    | (
-        | {
-            heading: string;
-            subheading?: string | null;
-            image?: (number | null) | Media;
-            ctaLabel?: string | null;
-            /**
-             * e.g. /contact or https://...
-             */
-            ctaHref?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'hero';
-          }
-        | {
-            body: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            };
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'content';
-          }
-        | {
-            heading?: string | null;
-            images?:
-              | {
-                  image: number | Media;
-                  caption?: string | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'gallery';
-          }
-        | {
-            heading?: string | null;
-            stats?:
-              | {
-                  value: string;
-                  label: string;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'statistics';
-          }
-        | {
-            heading?: string | null;
-            items?:
-              | {
-                  label: string;
-                  file: number | Media;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'downloads';
-          }
-        | {
-            heading?: string | null;
-            links?:
-              | {
-                  label: string;
-                  href: string;
-                  openInNewTab?: boolean | null;
-                  id?: string | null;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'quick-links';
-          }
-        | {
-            heading?: string | null;
-            intro?: string | null;
-            mode?: ('form' | 'info' | 'both') | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'contact';
-          }
-        | {
-            heading?: string | null;
-            count?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'latest-news';
-          }
-      )[]
-    | null;
-  /**
-   * Legacy content field — only rendered on the frontend when Layout above is empty. Prefer Layout blocks for new pages.
-   */
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  status: 'draft' | 'published';
-  /**
-   * Set automatically when published, or override manually.
-   */
-  publishedDate?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "news".
- */
-export interface News {
-  id: number;
-  title: string;
-  slug: string;
-  summary?: string | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  featuredImage?: (number | null) | Media;
-  site: number | Site;
-  status: 'draft' | 'published';
-  publishedDate?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "departments".
- */
-export interface Department {
-  id: number;
-  name: string;
-  /**
-   * e.g. DoH, DoE, DoF
-   */
-  acronym?: string | null;
-  site: number | Site;
-  email?: string | null;
-  phone?: string | null;
-  /**
-   * e.g. https://health.gov.pg
-   */
-  website?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents".
- */
-export interface Document {
-  id: number;
-  title: string;
-  file: number | Media;
-  category: 'policy' | 'report' | 'form' | 'legislation' | 'budget' | 'tender' | 'other';
-  site: number | Site;
   updatedAt: string;
   createdAt: string;
 }
@@ -538,36 +224,12 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
         relationTo: 'sites';
         value: number | Site;
       } | null)
     | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'news';
-        value: number | News;
-      } | null)
-    | ({
-        relationTo: 'departments';
-        value: number | Department;
-      } | null)
-    | ({
-        relationTo: 'documents';
-        value: number | Document;
-      } | null)
-    | ({
         relationTo: 'contact-submissions';
         value: number | ContactSubmission;
-      } | null)
-    | ({
-        relationTo: 'templates';
-        value: number | Template;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -637,24 +299,6 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "sites_select".
  */
 export interface SitesSelect<T extends boolean = true> {
@@ -662,199 +306,10 @@ export interface SitesSelect<T extends boolean = true> {
   slug?: T;
   domain?: T;
   agencyType?: T;
-  theme?: T;
   status?: T;
-  logo?: T;
-  heroImage?: T;
-  template?: T;
-  navigation?:
-    | T
-    | {
-        label?: T;
-        href?: T;
-        openInNewTab?: T;
-        children?:
-          | T
-          | {
-              label?: T;
-              href?: T;
-              description?: T;
-              openInNewTab?: T;
-              id?: T;
-            };
-        id?: T;
-      };
-  socialLinks?:
-    | T
-    | {
-        facebook?: T;
-        twitter?: T;
-        instagram?: T;
-        youtube?: T;
-      };
-  contactInfo?:
-    | T
-    | {
-        email?: T;
-        phone?: T;
-        address?: T;
-        poBox?: T;
-      };
   repoName?: T;
   repoUrl?: T;
   deployStatus?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages_select".
- */
-export interface PagesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  site?: T;
-  layout?:
-    | T
-    | {
-        hero?:
-          | T
-          | {
-              heading?: T;
-              subheading?: T;
-              image?: T;
-              ctaLabel?: T;
-              ctaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-        content?:
-          | T
-          | {
-              body?: T;
-              id?: T;
-              blockName?: T;
-            };
-        gallery?:
-          | T
-          | {
-              heading?: T;
-              images?:
-                | T
-                | {
-                    image?: T;
-                    caption?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        statistics?:
-          | T
-          | {
-              heading?: T;
-              stats?:
-                | T
-                | {
-                    value?: T;
-                    label?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        downloads?:
-          | T
-          | {
-              heading?: T;
-              items?:
-                | T
-                | {
-                    label?: T;
-                    file?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        'quick-links'?:
-          | T
-          | {
-              heading?: T;
-              links?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    openInNewTab?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        contact?:
-          | T
-          | {
-              heading?: T;
-              intro?: T;
-              mode?: T;
-              id?: T;
-              blockName?: T;
-            };
-        'latest-news'?:
-          | T
-          | {
-              heading?: T;
-              count?: T;
-              id?: T;
-              blockName?: T;
-            };
-      };
-  content?: T;
-  status?: T;
-  publishedDate?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "news_select".
- */
-export interface NewsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  summary?: T;
-  content?: T;
-  featuredImage?: T;
-  site?: T;
-  status?: T;
-  publishedDate?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "departments_select".
- */
-export interface DepartmentsSelect<T extends boolean = true> {
-  name?: T;
-  acronym?: T;
-  site?: T;
-  email?: T;
-  phone?: T;
-  website?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents_select".
- */
-export interface DocumentsSelect<T extends boolean = true> {
-  title?: T;
-  file?: T;
-  category?: T;
-  site?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -869,29 +324,6 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   message?: T;
   site?: T;
   status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "templates_select".
- */
-export interface TemplatesSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  description?: T;
-  thumbnail?: T;
-  category?: T;
-  defaultTheme?: T;
-  sections?:
-    | T
-    | {
-        type?: T;
-        enabled?: T;
-        id?: T;
-      };
-  isDefault?: T;
-  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }

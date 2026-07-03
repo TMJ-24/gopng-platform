@@ -4,9 +4,8 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@payloadcms/ui'
 import {
-  Globe, FileText, Newspaper, Users, FolderOpen, Image as ImageIcon,
-  Building2, MessageSquare, LayoutTemplate, Plus, Rocket, ExternalLink,
-  LogIn, PenLine, Server, Database, HardDrive, GitBranch, CheckCircle2,
+  Globe, Users, MessageSquare, Plus, Rocket, ExternalLink,
+  LogIn, PenLine, Server, Database, GitBranch, CheckCircle2,
 } from 'lucide-react'
 
 const C = {
@@ -39,34 +38,28 @@ const GROUPS: { label: string; items: Collection[] }[] = [
   {
     label: 'Content',
     items: [
-      { label: 'Sites',               slug: 'sites',               description: 'Manage government websites',   Icon: Globe,          iconColor: '#0972D3', iconBg: '#F2F8FD' },
-      { label: 'Pages',               slug: 'pages',               description: 'Static & dynamic pages',       Icon: FileText,       iconColor: '#545B64', iconBg: '#F2F3F3' },
-      { label: 'News',                slug: 'news',                description: 'News articles & announcements', Icon: Newspaper,     iconColor: '#1D6B2B', iconBg: '#EAF7EE' },
-      { label: 'Documents',           slug: 'documents',           description: 'Files, policies & reports',    Icon: FolderOpen,     iconColor: '#7A5400', iconBg: '#FFF8EC' },
-      { label: 'Media',               slug: 'media',               description: 'Images, logos & uploads',      Icon: ImageIcon,      iconColor: '#545B64', iconBg: '#F2F3F3' },
+      { label: 'Sites', slug: 'sites', description: 'Manage government websites', Icon: Globe, iconColor: '#0972D3', iconBg: '#F2F8FD' },
     ],
   },
   {
     label: 'Directory',
     items: [
-      { label: 'Departments',         slug: 'departments',          description: 'Government departments',       Icon: Building2,      iconColor: '#0972D3', iconBg: '#F2F8FD' },
-      { label: 'Contact Submissions', slug: 'contact-submissions', description: 'Enquiries from citizens',      Icon: MessageSquare,  iconColor: '#6B21A8', iconBg: '#F8F0FF' },
+      { label: 'Contact Submissions', slug: 'contact-submissions', description: 'Enquiries from citizens', Icon: MessageSquare, iconColor: '#6B21A8', iconBg: '#F8F0FF' },
     ],
   },
   {
     label: 'Platform',
     items: [
-      { label: 'Templates',           slug: 'templates',           description: 'Site layout templates',        Icon: LayoutTemplate, iconColor: '#0972D3', iconBg: '#F2F8FD' },
-      { label: 'Users',               slug: 'users',               description: 'Admin & editor accounts',      Icon: Users,          iconColor: '#545B64', iconBg: '#F2F3F3' },
+      { label: 'Users', slug: 'users', description: 'Admin & editor accounts', Icon: Users, iconColor: '#545B64', iconBg: '#F2F3F3' },
     ],
   },
 ]
 
 const WORKFLOW_STEPS: { Icon: React.ComponentType<{ size?: number; color?: string }>; title: string; body: string }[] = [
   { Icon: LogIn,    title: '1. Log in',        body: 'Sign in with the DTO account issued to you or your agency. Admins can create new accounts under Users.' },
-  { Icon: Rocket,   title: '2. Launch a site', body: 'Use Site Builder to pick an agency template, choose which homepage sections to enable, and provision your site in minutes.' },
-  { Icon: PenLine,  title: '3. Customise',     body: 'Add Pages, News, Documents and Media for your agency. Pages support a drag-and-drop block layout (Hero, Gallery, Stats and more).' },
-  { Icon: CheckCircle2, title: '4. Publish',   body: 'Set status to Published. Your site automatically redeploys and goes live on its assigned .gov.pg domain.' },
+  { Icon: Rocket,   title: '2. Launch a site', body: 'Use Site Builder to provision a new GitHub repo for your agency and get invited as a collaborator in minutes.' },
+  { Icon: PenLine,  title: '3. Customise',     body: 'Edit your site’s pages, news and documents through its own visual editor — changes commit straight to your site’s Git repo.' },
+  { Icon: CheckCircle2, title: '4. Publish',   body: 'Every commit rebuilds your static site automatically and goes live on its assigned .gov.pg domain.' },
 ]
 
 function CollectionCard({ item }: { item: Collection }) {
@@ -179,7 +172,6 @@ export function DashboardCollectionCards() {
   const [counts, setCounts] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
   const [recentSites, setRecentSites] = useState<any[]>([])
-  const [recentNews, setRecentNews] = useState<any[]>([])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light')
@@ -206,7 +198,7 @@ export function DashboardCollectionCards() {
     const observer = new MutationObserver(hide)
     observer.observe(document.body, { childList: true, subtree: true })
 
-    const slugs = ['sites', 'pages', 'news', 'documents', 'media', 'departments', 'contact-submissions', 'templates', 'users']
+    const slugs = ['sites', 'contact-submissions', 'users']
     Promise.all(
       slugs.map(slug =>
         fetch(`/api/${slug}?limit=0`).then(r => r.json()).then(d => [slug, d.totalDocs ?? 0] as [string, number]).catch(() => [slug, 0] as [string, number])
@@ -216,7 +208,6 @@ export function DashboardCollectionCards() {
     fetch('/api/sites?limit=1&where[status][equals]=active&limit=0').then(r => r.json()).then(d => setCounts(c => ({ ...c, 'sites-active': d.totalDocs ?? 0 }))).catch(() => {})
     fetch('/api/contact-submissions?limit=0&where[status][equals]=new').then(r => r.json()).then(d => setCounts(c => ({ ...c, 'contact-new': d.totalDocs ?? 0 }))).catch(() => {})
     fetch('/api/sites?limit=5&sort=-createdAt').then(r => r.json()).then(d => setRecentSites(d.docs ?? [])).catch(() => {})
-    fetch('/api/news?limit=5&sort=-createdAt&where[status][equals]=published').then(r => r.json()).then(d => setRecentNews(d.docs ?? [])).catch(() => {})
 
     return () => observer.disconnect()
   }, [])
@@ -256,9 +247,9 @@ export function DashboardCollectionCards() {
           </h2>
           <p style={{ fontSize: 13, color: '#B0BAC4', lineHeight: 1.6, margin: 0 }}>
             Instead of every ministry, department and provincial government running its own separate website
-            infrastructure, GoPNG Platform gives Digital Transformation Officers (DTOs) one shared Content
-            Management System. Content, media and site configuration all live here — each agency's public
-            website is then generated and deployed from that shared content, to Government Standard layouts.
+            infrastructure, GoPNG Platform gives Digital Transformation Officers (DTOs) one shared launch point.
+            This console manages the roster of agency sites, DTO accounts and citizen enquiries — each agency's
+            actual content lives as static pages in its own Git repository, edited through its own visual editor.
           </p>
         </div>
 
@@ -267,15 +258,9 @@ export function DashboardCollectionCards() {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
             <Database size={15} color={C.orange} style={{ marginTop: 1, flexShrink: 0 }} />
             <span style={{ fontSize: 12, color: '#D5DBDB', lineHeight: 1.5 }}>
-              <strong style={{ color: '#FFFFFF' }}>Structured content</strong> — sites, pages, news, documents and
-              users are stored in a shared Postgres database, so all agencies use the same reliable, backed-up store.
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <HardDrive size={15} color={C.orange} style={{ marginTop: 1, flexShrink: 0 }} />
-            <span style={{ fontSize: 12, color: '#D5DBDB', lineHeight: 1.5 }}>
-              <strong style={{ color: '#FFFFFF' }}>Media storage</strong> — logos, photos and uploaded files are
-              kept in object storage (S3), so large media never slows down the CMS itself.
+              <strong style={{ color: '#FFFFFF' }}>Platform registry</strong> — the site roster, DTO accounts and
+              contact-form enquiries are stored in a shared Postgres database here, so every agency uses the same
+              reliable, backed-up control plane.
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -323,7 +308,6 @@ export function DashboardCollectionCards() {
       <div style={{ marginTop: 28, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
         <StatPill label="Sites"              value={counts['sites'] ?? 0}         loading={loading} href="/admin/collections/sites" />
         <StatPill label="Active Sites"        value={counts['sites-active'] ?? 0}  loading={loading} href="/admin/collections/sites?where[status][equals]=active" />
-        <StatPill label="Pages"               value={counts['pages'] ?? 0}         loading={loading} href="/admin/collections/pages" />
         <StatPill label="New Enquiries"       value={counts['contact-new'] ?? 0}   loading={loading} href="/admin/collections/contact-submissions" />
       </div>
 
@@ -372,26 +356,6 @@ export function DashboardCollectionCards() {
                 <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 12, background: site.status === 'active' ? C.successBg : C.bgPage, color: site.status === 'active' ? C.success : C.textMuted, border: `1px solid ${site.status === 'active' ? '#A8D5B5' : C.border}`, fontWeight: 600, textTransform: 'capitalize', flexShrink: 0 }}>
                   {site.status ?? 'draft'}
                 </span>
-              </div>
-            </Link>
-          )}
-        />
-        <ActivityList
-          title="Latest News"
-          items={recentNews}
-          viewAllHref="/admin/collections/news"
-          renderItem={(item: any) => (
-            <Link key={item.id} href={`/admin/collections/news/${item.id}`} style={{ textDecoration: 'none' }}>
-              <div style={{ padding: '10px 18px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Newspaper size={14} color={C.textSub} style={{ flexShrink: 0 }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {typeof item.title === 'object' ? item.title?.en : item.title}
-                  </div>
-                  <div style={{ fontSize: 11, color: C.textMuted }}>
-                    {item.publishedDate ? new Date(item.publishedDate).toLocaleDateString() : 'Draft'}
-                  </div>
-                </div>
               </div>
             </Link>
           )}

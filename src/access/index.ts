@@ -17,27 +17,6 @@ export const publicRead: Access = ({ req }) => {
   return true // public
 }
 
-// Admin can do anything; editor can write only to their assigned sites
-export const contentAccess =
-  (operation: 'create' | 'update' | 'delete'): Access =>
-  ({ req, data }) => {
-    if (!req.user) return false
-    if (req.user.role === 'admin') return true
-    if (req.user.role === 'editor' && operation !== 'delete') {
-      const assigned: number[] = ((req.user as any).assignedSites ?? []).map(
-        (s: any) => (typeof s === 'object' ? s.id : s),
-      )
-      if (assigned.length === 0) return false
-      if (operation === 'create') {
-        const siteId = Number(data?.site)
-        return assigned.includes(siteId)
-      }
-      // For update: return a where-clause so Payload filters at the DB level
-      return { site: { in: assigned } }
-    }
-    return false
-  }
-
 // Admin only — for Sites and Users management
 export const adminOnly: Access = ({ req }) => req.user?.role === 'admin'
 

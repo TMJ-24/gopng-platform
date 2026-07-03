@@ -1,21 +1,13 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import sharp from 'sharp'
 
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
 import { Sites } from './collections/Sites'
-import { Pages } from './collections/Pages'
-import { News } from './collections/News'
-import { Departments } from './collections/Departments'
-import { Documents } from './collections/Documents'
 import { ContactSubmissions } from './collections/ContactSubmissions'
-import { Templates } from './collections/Templates'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -52,7 +44,13 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Sites, Pages, News, Departments, Documents, ContactSubmissions, Templates],
+  collections: [Users, Sites, ContactSubmissions],
+  // Public sites (site-template repos) are static and POST contact-form submissions
+  // cross-origin from ~100 growing agency domains. Real access control is enforced by
+  // Payload's access functions regardless of CORS (ContactSubmissions.create is already
+  // intentionally publicCreate) — CORS here is just the browser boundary, not the security
+  // control, so an exact-origin allowlist would be maintenance overhead for no real gain.
+  cors: '*',
   localization: {
     locales: [
       { label: 'English', code: 'en' },
@@ -93,18 +91,4 @@ export default buildConfig({
         }),
       }
     : {}),
-  sharp,
-  plugins: [
-    // Only mount S3 storage when a bucket is configured — avoids init
-    // failures in migration/build environments where S3_MEDIA_BUCKET is absent.
-    ...(process.env.S3_MEDIA_BUCKET
-      ? [
-          s3Storage({
-            collections: { media: true },
-            bucket: process.env.S3_MEDIA_BUCKET,
-            config: { region: process.env.AWS_REGION || 'ap-southeast-2' },
-          }),
-        ]
-      : []),
-  ],
 })

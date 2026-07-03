@@ -69,9 +69,15 @@ const TEMPLATE_SEED_DATA: SeedTemplate[] = [
   },
 ]
 
+// The `templates` collection this migration seeds was removed in
+// 20260703_130000_trim_to_platform_control_plane — this file is a frozen historical record
+// of a migration that already ran successfully against the schema as it existed at the time,
+// so its Local API calls are cast loosely rather than kept type-checked against the current
+// (now-narrower) CollectionSlug union.
 export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
+  const p = payload as any
   for (const t of TEMPLATE_SEED_DATA) {
-    const existing = await payload.find({
+    const existing = await p.find({
       collection: 'templates',
       where: { slug: { equals: t.slug } },
       limit: 1,
@@ -79,16 +85,16 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
     })
     if (existing.totalDocs > 0) continue
 
-    await payload.create({
+    await p.create({
       collection: 'templates',
       data: {
         name: t.name,
         slug: t.slug,
-        category: t.category as any,
+        category: t.category,
         description: t.description,
-        defaultTheme: t.defaultTheme as any,
+        defaultTheme: t.defaultTheme,
         isActive: true,
-        sections: t.sections.map((type) => ({ type: type as any, enabled: true })),
+        sections: t.sections.map((type) => ({ type, enabled: true })),
       },
       req,
     })
@@ -96,15 +102,16 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
 }
 
 export async function down({ payload, req }: MigrateDownArgs): Promise<void> {
+  const p = payload as any
   for (const t of TEMPLATE_SEED_DATA) {
-    const existing = await payload.find({
+    const existing = await p.find({
       collection: 'templates',
       where: { slug: { equals: t.slug } },
       limit: 1,
       req,
     })
     if (existing.docs[0]) {
-      await payload.delete({ collection: 'templates', id: existing.docs[0].id, req })
+      await p.delete({ collection: 'templates', id: existing.docs[0].id, req })
     }
   }
 }

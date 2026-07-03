@@ -60,9 +60,8 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     const {
-      siteName, domain, agencyType, theme, templateId,
+      siteName, domain, agencyType,
       adminEmail, adminFirstName, adminLastName,
-      contactEmail, contactPhone, contactAddress,
     } = body
 
     if (role === 'admin' && (!siteName || !domain || !agencyType || !adminEmail)) {
@@ -94,21 +93,15 @@ export async function POST(req: Request) {
       }
     }
 
-    // 1 — Create Site
+    // 1 — Create Site (registry entry only — content/config/theme/contact info now live in
+    // the site's own Tina-managed content/config/site.json, seeded by provisionSiteRepo below)
     const site = await payload.create({
       collection: 'sites',
       data: {
         name: siteName,
         domain,
         agencyType,
-        theme: theme ?? 'default',
         status: 'active',
-        ...(templateId ? { template: templateId } : {}),
-        contactInfo: {
-          email: contactEmail || adminEmail || (user as any).email,
-          phone: contactPhone || '',
-          address: contactAddress || '',
-        },
       } as any,
     })
 
@@ -163,12 +156,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3 — Seed default pages
-    await Promise.allSettled([
-      payload.create({ collection: 'pages', data: { title: 'Home',     slug: 'home',    site: site.id, status: 'published' } as any }),
-      payload.create({ collection: 'pages', data: { title: 'About Us', slug: 'about',   site: site.id, status: 'published' } as any }),
-      payload.create({ collection: 'pages', data: { title: 'Contact',  slug: 'contact', site: site.id, status: 'published' } as any }),
-    ])
+    // Starter content (Home/About/Contact) now ships baked into the site-template repo
+    // itself — provisionSiteRepo's afterChange hook on Sites forks it as-is, no separate
+    // page-seeding step needed here.
 
     return Response.json({
       success: true,

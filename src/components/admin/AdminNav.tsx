@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@payloadcms/ui'
 import {
-  LayoutDashboard, Users, Image, Globe, FileText, Newspaper,
-  Building2, FolderOpen, MessageSquare, LayoutTemplate, Rocket,
+  LayoutDashboard, Users, Globe, MessageSquare, Rocket,
   LogOut, Menu, ChevronRight,
 } from 'lucide-react'
 import {
@@ -51,25 +50,19 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Content',
     items: [
-      { label: 'Sites',     href: '/admin/collections/sites',    slug: 'sites',    Icon: Globe,          iconColor: '#0972D3', iconBg: '#EBF5FB' },
-      { label: 'Pages',     href: '/admin/collections/pages',    slug: 'pages',    Icon: FileText,       iconColor: '#545B64', iconBg: '#F4F6F8' },
-      { label: 'News',      href: '/admin/collections/news',     slug: 'news',     Icon: Newspaper,      iconColor: '#1D6B2B', iconBg: '#E9F7EE' },
-      { label: 'Documents', href: '/admin/collections/documents', slug: 'documents', Icon: FolderOpen,   iconColor: '#7A5400', iconBg: '#FFF8EC' },
-      { label: 'Media',     href: '/admin/collections/media',    slug: 'media',    Icon: Image,          iconColor: '#545B64', iconBg: '#F4F6F8' },
+      { label: 'Sites', href: '/admin/collections/sites', slug: 'sites', Icon: Globe, iconColor: '#0972D3', iconBg: '#EBF5FB' },
     ],
   },
   {
     label: 'Directory',
     items: [
-      { label: 'Departments',         href: '/admin/collections/departments',          slug: 'departments',          Icon: Building2,     iconColor: '#0972D3', iconBg: '#EBF5FB' },
       { label: 'Contact Submissions', href: '/admin/collections/contact-submissions',  slug: 'contact-submissions',  Icon: MessageSquare, iconColor: '#6B21A8', iconBg: '#F5F0FF' },
     ],
   },
   {
     label: 'Platform',
     items: [
-      { label: 'Templates', href: '/admin/collections/templates', slug: 'templates', Icon: LayoutTemplate, iconColor: '#0972D3', iconBg: '#EBF5FB' },
-      { label: 'Users',     href: '/admin/collections/users',     slug: 'users',     Icon: Users,          iconColor: '#545B64', iconBg: '#F4F6F8' },
+      { label: 'Users', href: '/admin/collections/users', slug: 'users', Icon: Users, iconColor: '#545B64', iconBg: '#F4F6F8' },
     ],
   },
 ]
@@ -254,7 +247,6 @@ export function AdminNav() {
   const isDashboard = pathname === '/admin' || pathname === '/admin/'
 
   const [collapsed, setCollapsed] = useState(false)
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [counts, setCounts] = useState<Record<string, number>>({})
   const [navGroups, setNavGroups] = useState<NavGroup[]>(() => NAV_GROUPS.map(loadNavGroup))
 
@@ -279,19 +271,11 @@ export function AdminNav() {
     ? ((user as any).firstName?.[0] ?? (user as any).email?.[0] ?? '?').toUpperCase()
     : '?'
 
-  /* Fetch logo + record counts on mount */
+  /* Record counts on mount — logo is no longer a Sites field (it now lives in each
+     site's own Tina-managed content/config/site.json), so logoUrl always falls back
+     to the default icon rendered below. */
   useEffect(() => {
-    const base = process.env.NEXT_PUBLIC_PAYLOAD_URL ?? 'http://localhost:3000'
-
-    fetch('/api/sites?limit=1&depth=1&sort=-createdAt').then(r => r.json()).then(data => {
-      const site = data?.docs?.[0]
-      if (site?.logo?.url) {
-        const url = site.logo.url.startsWith(base) ? site.logo.url.slice(base.length) : site.logo.url
-        setLogoUrl(url)
-      }
-    }).catch(() => {})
-
-    const slugs = ['sites', 'pages', 'news', 'documents', 'media', 'departments', 'contact-submissions', 'templates', 'users']
+    const slugs = ['sites', 'contact-submissions', 'users']
     slugs.forEach(slug => {
       fetch(`/api/${slug}?limit=0`, { credentials: 'include' })
         .then(r => r.json())
@@ -338,16 +322,11 @@ export function AdminNav() {
           </button>
           {!collapsed && (
             <Link href="/admin" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
-              {logoUrl
-                ? <img src={logoUrl} alt="GoPNG" style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
-                : (
-                  <div style={{ width: 32, height: 32, borderRadius: 4, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                    <div style={{ position: 'absolute', inset: 0, background: '#000', clipPath: 'polygon(0 0,100% 0,0 100%)' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: '#CE1126', clipPath: 'polygon(100% 0,100% 100%,0 100%)' }} />
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>⭐</div>
-                  </div>
-                )
-              }
+              <div style={{ width: 32, height: 32, borderRadius: 4, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                <div style={{ position: 'absolute', inset: 0, background: '#000', clipPath: 'polygon(0 0,100% 0,0 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: '#CE1126', clipPath: 'polygon(100% 0,100% 100%,0 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>⭐</div>
+              </div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: 13, color: '#FFFFFF', whiteSpace: 'nowrap' }}>GoPNG Platform</div>
                 <div style={{ fontSize: 11, color: '#FFFFFF', opacity: 0.7, marginTop: 1, whiteSpace: 'nowrap' }}>Admin Console</div>
