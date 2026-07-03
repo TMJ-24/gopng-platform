@@ -9,6 +9,13 @@ import { StatsSection } from '@/components/marketing/StatsSection'
 import { CTASection } from '@/components/marketing/CTASection'
 import { C } from '@/components/marketing/theme'
 
+// This page reads a live count from Postgres (organizations currently on the platform),
+// so it must never be statically prerendered — `next build` runs inside the Docker image
+// build stage, where PAYLOAD_SECRET/DATABASE_URL aren't available yet (those are injected
+// at container runtime), and the count should be fresh per-request anyway, not baked in
+// at build time.
+export const dynamic = 'force-dynamic'
+
 const PILLARS = [
   {
     title: 'One platform, every agency',
