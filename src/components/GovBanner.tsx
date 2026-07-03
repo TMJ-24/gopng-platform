@@ -1,33 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { GlobeIcon, LockIcon, ShieldAlertIcon } from './Icons'
+import { GlobeIcon, LockIcon, InfoIcon, CloseIcon } from './Icons'
 
 export function GovBanner() {
   const [open, setOpen] = useState(false)
+  const [scamNoticeDismissed, setScamNoticeDismissed] = useState(false)
 
   return (
     <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e0e0e0', fontSize: 12 }}>
-
-      {/* ── Scam warning bar ──────────────────────────── */}
-      <div style={{ background: '#5c1a1a', color: '#ffffff' }}>
-        <div style={{
-          maxWidth: 1280, margin: '0 auto', padding: '6px 24px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          gap: 8, flexWrap: 'wrap', textAlign: 'center',
-        }}>
-          <ShieldAlertIcon size={14} style={{ flexShrink: 0, color: '#FFD700' }} />
-          <span>
-            Government officials will never ask you to transfer money or disclose bank log-in details over a phone call.
-          </span>
-          <a
-            href="tel:1799"
-            style={{ color: '#FFD700', fontWeight: 700, textDecoration: 'underline', whiteSpace: 'nowrap' }}
-          >
-            Call the 24/7 ScamShield Helpline at 1799 if you are unsure.
-          </a>
-        </div>
-      </div>
 
       {/* ── Masthead bar ─────────────────────────────── */}
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '6px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px 12px' }}>
@@ -89,6 +70,29 @@ export function GovBanner() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Scam warning notice ───────────────────────── */}
+      {!scamNoticeDismissed && (
+        <div style={{ background: '#EAF0FB', borderTop: '1px solid #D6E2F5' }}>
+          <div style={{
+            maxWidth: 1280, margin: '0 auto', padding: '10px 24px',
+            display: 'flex', alignItems: 'flex-start', gap: 10,
+          }}>
+            <InfoIcon size={16} style={{ flexShrink: 0, color: '#333333', marginTop: 1 }} />
+            <div style={{ flex: 1, color: '#1a1a1a', lineHeight: 1.6 }}>
+              <div>Government officials will never ask you to transfer money or disclose bank log-in details over a phone call.</div>
+              <div>Call the 24/7 ScamShield Helpline at 1799 if you are unsure if something is a scam.</div>
+            </div>
+            <button
+              onClick={() => setScamNoticeDismissed(true)}
+              aria-label="Dismiss scam warning"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#333333', padding: 2, display: 'flex', flexShrink: 0 }}
+            >
+              <CloseIcon size={14} />
+            </button>
           </div>
         </div>
       )}

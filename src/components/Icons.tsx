@@ -221,6 +221,16 @@ export function ShieldAlertIcon({ size, ...p }: IconProps) {
   )
 }
 
+export function InfoIcon({ size, ...p }: IconProps) {
+  return (
+    <svg {...defaults(size)} {...p}>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="11" x2="12" y2="16" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  )
+}
+
 export function DatabaseIcon({ size, ...p }: IconProps) {
   return (
     <svg {...defaults(size)} {...p}>
