@@ -59,7 +59,7 @@ export default async function HomePage() {
 
       {/* Why it exists */}
       <section style={{ padding: '72px 24px', background: '#FFFFFF' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 44 }}>
             <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
               Why This Platform Exists
@@ -81,7 +81,7 @@ export default async function HomePage() {
 
       {/* What we do teaser */}
       <section style={{ padding: '72px 24px', background: C.bgAlt }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
           <ImagePlaceholder label="Platform screenshot" minHeight={280} />
           <div>
             <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>

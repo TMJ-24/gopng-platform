@@ -17,7 +17,7 @@ export function StatsSection({ organizationCount }: { organizationCount: number 
 
   return (
     <section style={{ padding: '64px 24px', background: PALE_BG }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 24, textAlign: 'center' }}>
+      <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 24, textAlign: 'center' }}>
         {stats.map(s => (
           <div key={s.label}>
             <div style={{ fontSize: 44, fontWeight: 800, color: C.red, letterSpacing: '-0.02em', lineHeight: 1 }}>{s.value}</div>

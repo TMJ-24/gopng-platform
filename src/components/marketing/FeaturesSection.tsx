@@ -13,7 +13,7 @@ const FEATURES: Feature[] = [
 export function FeaturesSection() {
   return (
     <section style={{ padding: '72px 24px', background: '#FFFFFF' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1120, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.red, margin: '0 0 10px' }}>
             Features

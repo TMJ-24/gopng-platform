@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { PngFlag } from './PngFlag'
 
 const CONTAINER: React.CSSProperties = { maxWidth: 1120, margin: '0 auto', padding: '0 24px' }
 
@@ -74,13 +73,12 @@ export function GovBanner() {
     <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e0e0e0', fontSize: 11 }}>
       <div style={{ ...CONTAINER, padding: '4px 24px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 4, columnGap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <PngFlag size={12} />
           <span style={{ color: '#333333', fontWeight: 500, fontSize: 11 }}>An Official PNG Government Website</span>
         </div>
         <button
           onClick={() => setOpen(o => !o)}
           aria-expanded={open}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#0066cc', fontSize: 11, fontWeight: 600, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#0066cc', fontSize: 11, fontWeight: 500, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
         >
           How to identify
           <ExpandIcon open={open} />
